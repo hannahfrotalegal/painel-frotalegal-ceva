@@ -1,0 +1,852 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Indicadores Frota Legal — CEVA Logistics</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+:root{
+  color-scheme: light;
+  --navy:#0b1f4b; --navy-2:#13306e; --navy-soft:#e8edf7;
+  --red:#d7000f; --red-soft:#fde8ea;
+  --green:#1e9e5a; --green-soft:#e3f4ea; --amber:#e8a317; --amber-soft:#fdf3dc;
+  --grey:#c9ced8; --grey-2:#eef0f4;
+  --bg:#f4f6fa; --surface:#ffffff; --ink:#1b2333; --ink-2:#4a5468; --muted:#7b8496; --line:#e3e7ee;
+  --radius:12px; --shadow:0 1px 2px rgba(16,24,40,.05),0 1px 3px rgba(16,24,40,.08);
+  --font:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.4}
+a{color:var(--navy-2)}
+.wrap{max-width:1360px;margin:0 auto;padding:0 20px}
+/* ---------- header ---------- */
+header.top{background:var(--surface);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;gap:22px;padding-top:14px;padding-bottom:14px;flex-wrap:wrap}
+header.top img{height:54px;width:auto}
+header.top .ttl h1{margin:0;font-size:26px;letter-spacing:-.3px;color:var(--ink)}
+header.top .ttl p{margin:2px 0 0;color:var(--ink-2);font-size:12.5px;font-style:italic}
+header.top .meta{margin-left:auto;text-align:right;color:var(--muted);font-size:12px;line-height:1.55}
+header.top .meta b{color:var(--ink-2);font-weight:600}
+/* ---------- filtros ---------- */
+.filters{position:sticky;top:0;z-index:20;background:rgba(244,246,250,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.filters .wrap{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;padding-top:10px;padding-bottom:10px}
+.fgroup{display:flex;flex-direction:column;gap:4px}
+.fgroup>label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.seg{display:inline-flex;flex-wrap:wrap;max-width:100%;background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:3px}
+.seg button{border:0;background:transparent;padding:6px 14px;border-radius:7px;font:inherit;font-weight:600;color:var(--ink-2);cursor:pointer}
+.seg button.on{background:var(--navy);color:#fff}
+select{max-width:240px}
+select,input[type=date],input[type=search]{font:inherit;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);min-height:34px}
+select:focus,input:focus,button:focus-visible{outline:2px solid var(--navy-2);outline-offset:1px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;max-width:640px}
+.chip{border:1px solid var(--line);background:var(--surface);color:var(--ink-2);border-radius:7px;padding:5px 10px;font:inherit;font-weight:600;font-size:12.5px;cursor:pointer;min-width:46px}
+.chip.on{background:#2d5d73;border-color:#2d5d73;color:#fff}
+.chip.partial{border-style:dashed}
+.chip small{font-weight:500;opacity:.8}
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--ink-2);border-radius:8px;padding:6px 12px;font:inherit;font-weight:600;cursor:pointer;min-height:34px}
+.btn:hover{border-color:var(--navy-2);color:var(--navy-2)}
+.btn.link{border:0;background:none;padding:4px 6px;min-height:0;text-decoration:underline}
+.fspacer{flex:1}
+/* ---------- período ---------- */
+.period{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:18px 0 12px}
+.period h2{margin:0;font-size:18px}
+.period .sub{color:var(--muted)}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11.5px;font-weight:700}
+.badge.warn{background:var(--amber-soft);color:#8a5a00}
+.badge.info{background:var(--navy-soft);color:var(--navy-2)}
+/* ---------- kpis ---------- */
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.kpi{border-radius:var(--radius);padding:16px 16px 14px;background:var(--navy);color:#fff;box-shadow:var(--shadow);min-height:118px;display:flex;flex-direction:column;justify-content:center;text-align:center}
+.kpi .v{font-size:34px;font-weight:700;letter-spacing:-.5px;line-height:1.1}
+.kpi .l{font-size:14px;font-weight:600;margin-top:4px}
+.kpi .s{font-size:12px;opacity:.85;margin-top:6px;min-height:16px}
+.kpi.red{background:var(--red)} .kpi.amber{background:#b97800} .kpi.green{background:var(--green)}
+.kpi.light{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
+.kpi.light .s{color:var(--ink-2);opacity:1}
+.kpi.light .v.bad{color:var(--red)}
+.delta.up{color:#bff3d2} .delta.down{color:#ffd1d4}
+.kpi.light .delta.up{color:var(--green)} .kpi.light .delta.down{color:var(--red)}
+/* ---------- cards ---------- */
+.grid{display:grid;gap:14px;margin-top:14px}
+.g-1-2{grid-template-columns:1fr 2fr}
+.g-2{grid-template-columns:1fr 1fr}
+.g-3{grid-template-columns:1fr 1fr 1fr}
+.g-3-2{grid-template-columns:3fr 2fr}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;min-width:0}
+.card h3{margin:0 0 2px;font-size:15px}
+.card .hint{margin:0 0 10px;color:var(--muted);font-size:12px}
+.chartbox{position:relative;height:260px}
+.chartbox.tall{height:320px}
+.chartbox.short{height:220px}
+.empty{color:var(--muted);text-align:center;padding:40px 10px}
+.section-title{margin:28px 0 0;font-size:17px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.section-title span{font-size:12.5px;color:var(--muted);font-weight:500}
+/* ---------- destaques ---------- */
+.insights{margin:14px 0 0;padding:12px 16px;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--navy);border-radius:var(--radius);box-shadow:var(--shadow)}
+.insights h3{margin:0 0 6px;font-size:14px}
+.insights ul{margin:0;padding-left:18px;color:var(--ink-2)}
+.insights li{margin:2px 0}
+/* ---------- tabelas ---------- */
+.tbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.tbar .count{color:var(--muted);font-size:12px;margin-left:auto}
+.tscroll{max-height:560px;overflow:auto;border:1px solid var(--line);border-radius:10px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{position:sticky;top:0;background:#f7f8fb;z-index:1;text-align:left;font-weight:600;color:var(--ink-2);padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap;cursor:pointer;user-select:none}
+thead th.num,td.num{text-align:right}
+thead th .arr{opacity:.5;font-size:10px;margin-left:3px}
+tbody td{padding:7px 10px;border-bottom:1px solid var(--grey-2);vertical-align:middle}
+tbody tr:hover td{background:#fafbfd}
+td.mono{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-weight:600;letter-spacing:.3px}
+td.wrapc{max-width:360px;color:var(--ink-2);font-size:12px;white-space:normal}
+.st{display:inline-flex;align-items:center;gap:5px;font-weight:600;font-size:12px;white-space:nowrap}
+.st i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.st.ok i{background:var(--green)} .st.at i{background:var(--amber)} .st.bl i{background:var(--red)} .st.na i{background:var(--grey)}
+.ws{display:inline-flex;gap:3px;vertical-align:middle;margin-right:6px}
+.ws b{width:11px;height:11px;border-radius:3px;background:var(--grey-2);border:1px solid #dde1e8;display:inline-block}
+.ws b.y{background:var(--green);border-color:var(--green)}
+.ws b.p{background:repeating-linear-gradient(45deg,#eef0f4 0 2px,#fff 2px 4px)}
+.pill{display:inline-block;padding:1px 7px;border-radius:10px;font-size:11.5px;font-weight:700}
+.pill.g{background:var(--green-soft);color:#11633a} .pill.r{background:var(--red-soft);color:#9b0010} .pill.a{background:var(--amber-soft);color:#8a5a00} .pill.n{background:var(--grey-2);color:var(--ink-2)}
+.dias.bad{color:var(--red);font-weight:600}
+details.outros summary{cursor:pointer;color:var(--navy-2)}
+details.outros div{color:var(--ink-2);font-size:12px;margin-top:4px}
+/* ---------- rodapé ---------- */
+footer{margin:30px 0 40px;color:var(--muted);font-size:12px}
+footer .card{color:var(--ink-2);font-size:12.5px}
+footer ul{margin:6px 0 0;padding-left:18px}
+footer .foot-line{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
+.admin{margin-top:14px;border-left:4px solid var(--amber)}
+.admin h4{margin:10px 0 4px;font-size:13px}
+/* ---------- overlay ---------- */
+#overlay{position:fixed;inset:0;background:rgba(244,246,250,.92);display:flex;align-items:center;justify-content:center;z-index:50;text-align:center;padding:20px}
+#overlay .box{max-width:520px}
+#overlay .spin{width:36px;height:36px;border:4px solid var(--navy-soft);border-top-color:var(--navy);border-radius:50%;margin:0 auto 12px;animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+#overlay.err .spin{display:none}
+.hidden{display:none!important}
+/* ---------- responsivo ---------- */
+@media (max-width:1180px){.kpis{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:900px){.g-1-2,.g-2,.g-3,.g-3-2{grid-template-columns:1fr}.filters{position:static}header.top .meta{margin-left:0;text-align:left}}
+@media (max-width:560px){.seg button{padding:6px 10px}.wrap{padding:0 16px}.kpis{grid-template-columns:repeat(2,1fr)}.kpi .v{font-size:26px}header.top .ttl h1{font-size:21px}}
+/* ---------- impressão ---------- */
+@media print{
+  @page{size:A4 landscape;margin:10mm}
+  body{background:#fff;font-size:12px}
+  .filters,.noprint,#overlay,footer .foot-line{display:none!important}
+  .card,.kpi,.insights{box-shadow:none;break-inside:avoid}
+  .tscroll{max-height:none;overflow:visible}
+  .kpi{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .ws b,.st i,.pill{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div id="overlay"><div class="box"><div class="spin"></div><div id="ovmsg">Carregando o prontuário…</div></div></div>
+
+<header class="top">
+  <div class="wrap">
+    <img src="data:image/png;base64,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" alt="CEVA Logistics">
+    <div class="ttl">
+      <h1>Indicadores Frota Legal</h1>
+      <p>*Veículo aderente = realizou ao menos 1 checklist no período.</p>
+    </div>
+    <div class="meta" id="meta"></div>
+  </div>
+</header>
+
+<nav class="filters" aria-label="Filtros">
+  <div class="wrap">
+    <div class="fgroup">
+      <label>Visão</label>
+      <div class="seg" id="modo">
+        <button data-m="semana" class="on">Semana</button>
+        <button data-m="mes">Mês</button>
+        <button data-m="periodo">Período</button>
+      </div>
+    </div>
+    <div class="fgroup" id="fSemana">
+      <label>Semana <span style="text-transform:none;font-weight:500">(clique para somar · duplo clique = só ela)</span></label>
+      <div class="chips" id="chipsSemana"></div>
+    </div>
+    <div class="fgroup hidden" id="fMes">
+      <label>Mês</label>
+      <select id="selMes"></select>
+    </div>
+    <div class="fgroup hidden" id="fPeriodo">
+      <label>De — até</label>
+      <div style="display:flex;gap:6px;align-items:center"><input type="date" id="dDe"><span>—</span><input type="date" id="dAte"></div>
+    </div>
+    <div class="fgroup">
+      <label>Tipo de veículo</label>
+      <select id="selTipo"><option value="">Todos</option></select>
+    </div>
+    <div class="fgroup">
+      <label>Transportador</label>
+      <select id="selTransp"><option value="">Todos</option></select>
+    </div>
+    <div class="fgroup">
+      <label>Checklist</label>
+      <select id="selCheck"><option value="">Todos</option></select>
+    </div>
+    <div class="fspacer"></div>
+    <div class="fgroup noprint">
+      <label>&nbsp;</label>
+      <div style="display:flex;gap:6px"><button class="btn" id="btnLimpar" title="Voltar aos filtros padrão">Limpar</button><button class="btn" id="btnPrint" title="Imprimir ou salvar em PDF">Imprimir / PDF</button></div>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap">
+  <div class="period" id="periodo"></div>
+
+  <section class="kpis" id="kpis"></section>
+  <div class="insights" id="insights"></div>
+
+  <div class="grid g-1-2">
+    <div class="card">
+      <h3>Aderência no período</h3>
+      <p class="hint">Veículos da base fixa com ao menos 1 checklist.</p>
+      <div class="chartbox"><canvas id="cDonut" aria-label="Gráfico de rosca da aderência"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>Histórico semanal</h3>
+      <p class="hint" id="hSemanal">% de veículos aderentes por semana (seg–dom). Pontos vermelhos = semanas selecionadas.</p>
+      <div class="chartbox"><canvas id="cSemanal" aria-label="Linha da aderência semanal"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid g-2">
+    <div class="card">
+      <h3>Histórico mensal</h3>
+      <p class="hint">% de veículos com ao menos 1 checklist no mês. Barras claras = mês com cobertura parcial de dados.</p>
+      <div class="chartbox"><canvas id="cMensal" aria-label="Barras da aderência mensal"></canvas></div>
+    </div>
+    <div class="card">
+      <h3 id="tDia">Checklists por dia</h3>
+      <p class="hint" id="hDia">Quantidade de checklists realizados no período. Passe o mouse para ver as placas.</p>
+      <div class="chartbox"><canvas id="cDia" aria-label="Barras de checklists por dia"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid g-2">
+    <div class="card">
+      <h3>Aderência por tipo de veículo</h3>
+      <p class="hint">Aderentes / total da base no período.</p>
+      <div class="chartbox" id="bxTipo"><canvas id="cTipo" aria-label="Aderência por tipo de veículo"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>Condutores e checklists realizados</h3>
+      <p class="hint">Lista fixa de condutores; registros de outros responsáveis entram em “Outros”.</p>
+      <div class="tscroll" style="max-height:440px"><table id="tCond"></table></div>
+    </div>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <h3>Placas e semanas de aderência</h3>
+      <p class="hint">Quadradinhos = semanas do período (verde = fez checklist). Status e itens negativados vêm do retrato atual do prontuário.</p>
+      <div class="tbar">
+        <div class="seg" id="fPlaca">
+          <button data-f="" class="on">Todas</button>
+          <button data-f="ad">Aderentes</button>
+          <button data-f="nad">Não aderentes</button>
+          <button data-f="bl">Bloqueadas</button>
+        </div>
+        <input type="search" id="qPlaca" placeholder="Buscar placa…" aria-label="Buscar placa">
+        <button class="btn noprint" id="csvPlacas">Exportar CSV</button>
+        <span class="count" id="cntPlacas"></span>
+      </div>
+      <div class="tscroll"><table id="tPlacas"></table></div>
+    </div>
+  </div>
+
+  <h2 class="section-title">Situação atual da frota <span id="retrato"></span></h2>
+  <div class="grid g-3">
+    <div class="card">
+      <h3>Status no Frota Legal</h3>
+      <p class="hint">Liberado / Atenção / Bloqueado, hoje (% dos veículos da base).</p>
+      <div class="chartbox short"><canvas id="cStatus" aria-label="Status dos veículos"></canvas></div>
+      <div id="motivos" style="margin-top:8px;font-size:12.5px;color:var(--ink-2)"></div>
+    </div>
+    <div class="card">
+      <h3>Tempo desde a última inspeção</h3>
+      <p class="hint">Última inspeção Condutor/Segurança registrada (qualquer data).</p>
+      <div class="chartbox short"><canvas id="cRecencia" aria-label="Tempo desde a última inspeção"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>Itens negativados mais frequentes</h3>
+      <p class="hint">Itens NOK pendentes nos veículos da base.</p>
+      <div class="chartbox short" id="bxItens"><canvas id="cItens" aria-label="Itens negativados"></canvas></div>
+    </div>
+  </div>
+</main>
+
+<footer class="wrap">
+  <div class="card">
+    <b>Como os números são calculados</b>
+    <ul>
+      <li><b>Base de veículos:</b> lista fixa de placas da CEVA (<span id="nBase"></span>). Inspeções em placas fora dessa lista não entram nos indicadores.</li>
+      <li><b>Checklists considerados:</b> <span id="lstCheck"></span>. A inspeção de fumaça escura não entra.</li>
+      <li><b>Veículo aderente:</b> fez ao menos 1 checklist no período. <b>Conformidade da frota</b> = aderentes ÷ total de veículos da base. Não representa aprovação das condições do veículo.</li>
+      <li><b>Semanas</b> de segunda a domingo (padrão ISO, W1 = semana com a 1ª quinta-feira do ano). A semana em andamento aparece como parcial.</li>
+      <li><b>Histórico:</b> o prontuário traz os últimos 60 dias; semanas mais antigas vêm do histórico acumulado a cada atualização.</li>
+    </ul>
+    <div id="adminBox"></div>
+  </div>
+  <div class="foot-line">
+    <span>Frota Legal · Demarco — Gente &amp; Segurança</span>
+    <span class="fspacer"></span>
+    <label class="btn link" for="fileLocal" title="Pré-visualizar um prontuário sem publicar">Carregar arquivo local</label>
+    <input type="file" id="fileLocal" accept=".xlsx" class="hidden">
+  </div>
+</footer>
+
+<script>
+/* =================== CONFIGURAÇÃO =================== */
+const CFG = {
+  ARQ_PRONT: "dados/prontuario-equipamentos.xlsx",
+  ARQ_HIST:  "dados/historico_inspecoes.csv",
+  CHECKLISTS: ["Inspeção Condutor", "Inspeção de Segurança"],
+  FAIXA_VERDE: 0.80,      // conformidade >= 80% -> verde
+  FAIXA_AMARELA: 0.50,    // >= 50% -> amarelo; abaixo -> vermelho
+  DIAS_ALERTA: 30,        // "sem inspeção há mais de N dias"
+  DATA_INICIO: "2026-05-01", // inspeções antes desta data são ignoradas (abril/26 incompleto)
+  SEMANAS_HIST: 12,
+  MESES_HIST: 12
+};
+/* Base fixa (placas e condutores) — gerada a partir de BASE_SEMANAL_CEVA.xlsx */
+const BASE = {"placas": [{"p": "GGR1829", "t": "3/4"}, {"p": "TKO2A27", "t": "Cavalo (6x4)"}, {"p": "TKV6A79", "t": "Cavalo (6x4)"}, {"p": "CLU1249", "t": "Cavalo (4x2)"}, {"p": "CLU1250", "t": "Cavalo (4x2)"}, {"p": "CLU1259", "t": "Cavalo (4x2)"}, {"p": "CLU1260", "t": "Cavalo (4x2)"}, {"p": "KRN5J00", "t": "Cavalo (4x2)"}, {"p": "LTV6154", "t": "Cavalo (4x2)"}, {"p": "LTV6B56", "t": "Cavalo (4x2)"}, {"p": "TKE7G73", "t": "Cavalo (4x2)"}, {"p": "TKH0E86", "t": "Cavalo (4x2)"}, {"p": "TKR4I81", "t": "Cavalo (4x2)"}, {"p": "TKV0J18", "t": "Cavalo (4x2)"}, {"p": "TKW9H98", "t": "Cavalo (4x2)"}, {"p": "TKX9A78", "t": "Cavalo (4x2)"}, {"p": "TTG1F61", "t": "Cavalo (4x2)"}, {"p": "CUD5905", "t": "Carreta Sider"}, {"p": "EOJ9B41", "t": "Carreta Sider"}, {"p": "FDU2B90", "t": "Carreta Sider"}, {"p": "FJI1825", "t": "Carreta Sider"}, {"p": "FKG5245", "t": "Carreta Sider"}, {"p": "FPM3798", "t": "Carreta Sider"}, {"p": "FSO9672", "t": "Carreta Sider"}, {"p": "KXD8458", "t": "Carreta Sider"}, {"p": "LSO6932", "t": "Carreta Sider"}, {"p": "QJG9354", "t": "Carreta Sider"}, {"p": "TIT5H86", "t": "Carreta Sider"}, {"p": "TIV5A85", "t": "Carreta Sider"}, {"p": "TKI6G14", "t": "Carreta Sider"}, {"p": "TKP1F15", "t": "Carreta Sider"}, {"p": "TLE6E53", "t": "Carreta Sider"}, {"p": "TMH4D76", "t": "Carreta Sider"}, {"p": "AAK2831", "t": "Carreta"}, {"p": "AAK2J75", "t": "Carreta"}, {"p": "AJK7515", "t": "Carreta"}, {"p": "AJN4H23", "t": "Carreta"}, {"p": "AJN7B63", "t": "Carreta"}, {"p": "AJT4678", "t": "Carreta"}, {"p": "AKU2F22", "t": "CARRETA SIDER"}, {"p": "AKW2243", "t": "CARRETA SIDER"}, {"p": "ALG6559", "t": "Carreta"}, {"p": "ALR3E62", "t": "Carreta"}, {"p": "ALU2134", "t": "Carreta"}, {"p": "AOD8948", "t": "Carreta"}, {"p": "AOL0C62", "t": "Carreta"}, {"p": "AOS4530", "t": "Carreta"}, {"p": "AOS4F25", "t": "Carreta"}, {"p": "APM2133", "t": "Carreta"}, {"p": "APQ5H10", "t": "Carreta"}, {"p": "APQ5H16", "t": "Carreta"}, {"p": "APQ6A38", "t": "Carreta"}, {"p": "AQT5809", "t": "Carreta"}, {"p": "ARV6I33", "t": "Carreta"}, {"p": "ATE0895", "t": "CARRETA SIDER"}, {"p": "ATL0113", "t": "CARRETA SIDER"}, {"p": "AUG2C78", "t": "Carreta"}, {"p": "AVT6081", "t": "CARRETA SIDER"}, {"p": "AYT7087", "t": "Carreta"}, {"p": "AZR7F16", "t": "Carreta"}, {"p": "BAF8364", "t": "Carreta"}, {"p": "BAF8365", "t": "Carreta"}, {"p": "BAF8367", "t": "CARRETA SIDER"}, {"p": "BAF8369", "t": "Carreta"}, {"p": "BAF8370", "t": "Carreta"}, {"p": "CLU0I66", "t": "Carreta"}, {"p": "CLU1041", "t": "Carreta"}, {"p": "CLU1042", "t": "Carreta"}, {"p": "CLU1043", "t": "Carreta"}, {"p": "CUD5897", "t": "CARRETA SIDER"}, {"p": "CUD5904", "t": "CARRETA SIDER"}, {"p": "CUD5932", "t": "CARRETA SIDER"}, {"p": "CUD6009", "t": "CARRETA SIDER"}, {"p": "CUD6011", "t": "CARRETA SIDER"}, {"p": "CUD6012", "t": "CARRETA SIDER"}, {"p": "CUD6014", "t": "CARRETA SIDER"}, {"p": "CUD6016", "t": "CARRETA SIDER"}, {"p": "CUD6018", "t": "CARRETA SIDER"}, {"p": "CUD6022", "t": "CARRETA SIDER"}, {"p": "CUD6026", "t": "CARRETA SIDER"}, {"p": "CUD6032", "t": "CARRETA SIDER"}, {"p": "CUD6067", "t": "Carreta"}, {"p": "CUD6068", "t": "CARRETA SIDER"}, {"p": "CUD6069", "t": "CARRETA SIDER"}, {"p": "CUD6076", "t": "CARRETA SIDER"}, {"p": "CUD6077", "t": "Carreta"}, {"p": "CUD6078", "t": "CARRETA SIDER"}, {"p": "CUD6088", "t": "CARRETA SIDER"}, {"p": "CUD6089", "t": "CARRETA SIDER"}, {"p": "CUD6097", "t": "Carreta"}, {"p": "DTB0A14", "t": "Carreta"}, {"p": "DTB0A23", "t": "Carreta"}, {"p": "DTB0F63", "t": "Carreta"}, {"p": "DTB0G08", "t": "Carreta"}, {"p": "DTB0G68", "t": "Carreta"}, {"p": "DTC7I73", "t": "Carreta"}, {"p": "EPU7336", "t": "CARRETA SIDER"}, {"p": "EPU7374", "t": "Carreta"}, {"p": "FCE1790", "t": "Bi-Trem"}, {"p": "FCF0210", "t": "Bi-Trem"}, {"p": "FCI3680", "t": "Bi-Trem"}, {"p": "FCV4319", "t": "Carreta"}, {"p": "FDX7073", "t": "Bi-Trem"}, {"p": "FDZ3008", "t": "CARRETA SIDER"}, {"p": "FFA9259", "t": "Bi-Trem"}, {"p": "FGL1464", "t": "CARRETA SIDER"}, {"p": "FGU8097", "t": "Bi-Trem"}, {"p": "FIQ9504", "t": "Bi-Trem"}, {"p": "FJV9854", "t": "CARRETA SIDER"}, {"p": "FKG5809", "t": "Bi-Trem"}, {"p": "FLR5605", "t": "Bi-Trem"}, {"p": "FMN5186", "t": "Bi-Trem"}, {"p": "FNC6197", "t": "CARRETA SIDER"}, {"p": "FNE5347", "t": "Bi-Trem"}, {"p": "FOU9G72", "t": "CARRETA SIDER"}, {"p": "FSL6943", "t": "Bi-Trem"}, {"p": "FSN7946", "t": "Bi-Trem"}, {"p": "FSO3643", "t": "Bi-Trem"}, {"p": "FTG3045", "t": "Bi-Trem"}, {"p": "FTJ3342", "t": "Bi-Trem"}, {"p": "FTK7402", "t": "Bi-Trem"}, {"p": "FTV7506", "t": "CARRETA SIDER"}, {"p": "FVK0279", "t": "Bi-Trem"}, {"p": "FYZ8958", "t": "Bi-Trem"}, {"p": "FZB0674", "t": "Bi-Trem"}, {"p": "FZF8275", "t": "Bi-Trem"}, {"p": "GSH8509", "t": "Carreta"}, {"p": "KRP8856", "t": "Carreta"}, {"p": "LMJ0741", "t": "Carreta"}, {"p": "MCT6654", "t": "Carreta"}, {"p": "QJN3019", "t": "Carreta"}, {"p": "QJN3159", "t": "Carreta"}, {"p": "QJN3489", "t": "Carreta"}, {"p": "QJN4559", "t": "Carreta"}, {"p": "QTK3228", "t": "CARRETA SIDER"}, {"p": "RHE1H84", "t": "Carreta"}, {"p": "RHE3D05", "t": "CARRETA SIDER"}, {"p": "RHK1A78", "t": "Carreta"}, {"p": "RHK1A79", "t": "Carreta"}, {"p": "RHK1A83", "t": "Carreta"}, {"p": "RHK1A84", "t": "CARRETA SIDER"}, {"p": "RLE7J53", "t": "CARRETA SIDER"}, {"p": "STO8C43", "t": "CARRETA SIDER"}, {"p": "TJC5D50", "t": "CARRETA SIDER"}, {"p": "TJG8C09", "t": "CARRETA SIDER"}, {"p": "TJH8H18", "t": "CARRETA SIDER"}, {"p": "TJJ5F15", "t": "CARRETA SIDER"}, {"p": "TJK6C99", "t": "CARRETA SIDER"}, {"p": "TJQ8J68", "t": "CARRETA SIDER"}, {"p": "TJV1C06", "t": "CARRETA SIDER"}, {"p": "TJY2I85", "t": "CARRETA SIDER"}, {"p": "TKA3J49", "t": "CARRETA SIDER"}, {"p": "TKA6I40", "t": "Cavalo Trucado"}, {"p": "TKA9B31", "t": "Container"}, {"p": "TKC6A82", "t": "Carreta"}, {"p": "TKC6B08", "t": "CARRETA SIDER"}, {"p": "TKD4H22", "t": "CARRETA SIDER"}, {"p": "TKD5A35", "t": "CARRETA SIDER"}, {"p": "TKD5H33", "t": "CARRETA SIDER"}, {"p": "TKF0I62", "t": "CARRETA SIDER"}, {"p": "TKF7A41", "t": "Carreta"}, {"p": "TKG0H05", "t": "Container"}, {"p": "TKI2I47", "t": "CARRETA SIDER"}, {"p": "TKI3G94", "t": "Container"}, {"p": "TKI4C36", "t": "CARRETA SIDER"}, {"p": "TKI5J49", "t": "CARRETA SIDER"}, {"p": "TKI8F36", "t": "CARRETA SIDER"}, {"p": "TKJ4F20", "t": "CARRETA SIDER"}, {"p": "TKJ4H92", "t": "Carreta"}, {"p": "TKJ9D91", "t": "CARRETA SIDER"}, {"p": "TKL0E98", "t": "CARRETA SIDER"}, {"p": "TKM1F38", "t": "CARRETA SIDER"}, {"p": "TKM2E29", "t": "CARRETA SIDER"}, {"p": "TKN4J33", "t": "Carreta"}, {"p": "TKO0C86", "t": "Container"}, {"p": "TKP0A91", "t": "CARRETA SIDER"}, {"p": "TKR7B18", "t": "CARRETA SIDER"}, {"p": "TKR7I49", "t": "CARRETA SIDER"}, {"p": "TKR9B83", "t": "Carreta"}, {"p": "TKU1B25", "t": "CARRETA SIDER"}, {"p": "TKU4G31", "t": "Carreta"}, {"p": "TKV3J34", "t": "Cavalo Trucado"}, {"p": "TKW2I21", "t": "CARRETA SIDER"}, {"p": "TKW4D57", "t": "Carreta"}, {"p": "TKW6F90", "t": "CARRETA SIDER"}, {"p": "TKW7A48", "t": "Cavalo Mecânico"}, {"p": "TKX2H15", "t": "CARRETA SIDER"}, {"p": "TKX7F43", "t": "Carreta"}, {"p": "TLC1D05", "t": "Container"}, {"p": "TLK3E81", "t": "Carreta"}, {"p": "TLK8A37", "t": "Carreta"}, {"p": "TLU0H07", "t": "CARRETA SIDER"}, {"p": "TMH2G87", "t": "CARRETA SIDER"}, {"p": "UGP3D79", "t": "Container"}, {"p": "UGT5I72", "t": "Container"}, {"p": "UGV0H05", "t": "Container"}, {"p": "UGV3D95", "t": "Container"}, {"p": "UGV8E33", "t": "Container"}, {"p": "JRD7J50", "t": "Cavalo Mecânico"}, {"p": "QKE0A02", "t": "Carreta"}, {"p": "MAF0J59", "t": "Cavalo Simples"}, {"p": "FCF8D73", "t": "Cavalo Mecânico"}, {"p": "EVO8E96", "t": "CARRETA SIDER"}, {"p": "AZD4B75", "t": "Cavalo Mecânico"}, {"p": "QKE2F82", "t": "Carreta"}, {"p": "BDC7E44", "t": "CARRETA SIDER"}, {"p": "QTL5J00", "t": "Cavalo Mecânico"}, {"p": "BDC7E47", "t": "CARRETA SIDER"}, {"p": "RSZ5B97", "t": "Carreta"}, {"p": "GFJ5G76", "t": "Bi-Trem"}, {"p": "BDC7E48", "t": "CARRETA SIDER"}, {"p": "QCC2I66", "t": "Carreta"}, {"p": "QTK5900", "t": "Cavalo Mecânico"}, {"p": "BWJ5E96", "t": "Cavalo Mecânico"}, {"p": "EED4I09", "t": "Cavalo Mecânico"}, {"p": "CUB9548", "t": "Carreta"}, {"p": "MGR0F40", "t": "Cavalo Mecânico"}, {"p": "NUU5664", "t": "Carreta"}, {"p": "ALY3362", "t": "Cavalo Mecânico"}, {"p": "EVO2F09", "t": "Cavalo Simples"}, {"p": "IXT2D00", "t": "Cavalo Mecânico"}, {"p": "DBM0I96", "t": "CARRETA SIDER"}, {"p": "DJE0230", "t": "Cavalo Mecânico"}, {"p": "IES7B55", "t": "Cavalo Mecânico"}, {"p": "BYE2B91", "t": "Cavalo Mecânico"}, {"p": "DTB0D40", "t": "Cavalo Mecânico"}, {"p": "DTC4767", "t": "Cavalo Mecânico"}, {"p": "GXH0F62", "t": "Carreta"}, {"p": "CZZ4E31", "t": "Cavalo Mecânico"}, {"p": "EBW2119", "t": "Cavalo Mecânico"}, {"p": "MFG1B76", "t": "Cavalo Simples"}], "condutores": ["AILTON TORRES DE MORAES", "ALAN SANTOS VIANA", "ANTONIO MARCELO PEREIRA", "COSME VIANA DOS SANTOS", "DIRCEU DE LIMA MENDONÇA", "FABIO ELIAS DA COSTA", "ILZO CACHINSKI CASTRO", "JOSE ROBERTO RODRIGUES VIANA", "JOZIVAN LOPES SIMÕES", "LUIZ AMERICO DONISETE", "MARCIO DUARTE OLIVEIRA", "PAULO CESAR MULBAIER", "RAUL MILANEZ DE MELLO SENRA", "RENATO TOCI AYROSA", "SILVIO NOBRE PEREZ", "WEBERT MIGLIATI VERAS", "ADRIANO JOSE DA SILVA", "BRUNO SANTANA DE CARVALHO", "CICERO VIEIRA MACHADO", "GUILHERME RODRIGUES DA SILVA", "JADIR JOSÉ RAMIL", "JOSUE GOMES POSSIDONIO DA SILVA"], "duplicadas": [{"p": "TKO2A27", "tipos": ["Cavalo (6x4)", "Cavalo Trucado"]}, {"p": "TKV6A79", "tipos": ["Cavalo (6x4)", "Cavalo Trucado"]}, {"p": "CLU1249", "tipos": ["Cavalo (4x2)", "Cavalo Mecânico"]}, {"p": "CLU1250", "tipos": ["Cavalo (4x2)", "Cavalo Mecânico"]}, {"p": "CLU1259", "tipos": ["Cavalo (4x2)", "Cavalo Mecânico"]}, {"p": "CLU1260", "tipos": ["Cavalo (4x2)", "Cavalo Mecânico"]}, {"p": "KRN5J00", "tipos": ["Cavalo (4x2)", "Carreta"]}, {"p": "LTV6154", "tipos": ["Cavalo (4x2)", "Cavalo Mecânico"]}, {"p": "LTV6B56", "tipos": ["Cavalo (4x2)", "Cavalo Mecânico"]}, {"p": "TKE7G73", "tipos": ["Cavalo (4x2)", "Cavalo Mecânico"]}, {"p": "TKH0E86", "tipos": ["Cavalo (4x2)", "Cavalo Mecânico"]}, {"p": "TKR4I81", "tipos": ["Cavalo (4x2)", "Cavalo Mecânico"]}, {"p": "TKV0J18", "tipos": ["Cavalo (4x2)", "Cavalo Mecânico"]}, {"p": "TKW9H98", "tipos": ["Cavalo (4x2)", "Cavalo Mecânico"]}, {"p": "TKX9A78", "tipos": ["Cavalo (4x2)", "Cavalo Mecânico"]}, {"p": "TTG1F61", "tipos": ["Cavalo (4x2)", "Caminhão Trator"]}, {"p": "FDU2B90", "tipos": ["Carreta Sider", "Bi-Trem"]}, {"p": "FJI1825", "tipos": ["Carreta Sider", "Bi-Trem"]}, {"p": "FKG5245", "tipos": ["Carreta Sider", "Bi-Trem"]}, {"p": "FPM3798", "tipos": ["Carreta Sider", "Bi-Trem"]}, {"p": "FSO9672", "tipos": ["Carreta Sider", "Bi-Trem"]}, {"p": "KXD8458", "tipos": ["Carreta Sider", "Carreta"]}, {"p": "LSO6932", "tipos": ["Carreta Sider", "Carreta"]}, {"p": "QJG9354", "tipos": ["Carreta Sider", "Carreta"]}], "atualizada": "28/10/2026"};
+
+/* =================== utilitários =================== */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const norm = s => String(s ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[\s\u00a0]+/g," ").trim().toUpperCase();
+const D = s => new Date(s + "T00:00:00Z");
+const iso = d => d.toISOString().slice(0,10);
+const addDays = (s,n) => { const d = D(s); d.setUTCDate(d.getUTCDate()+n); return iso(d); };
+const diffDays = (a,b) => Math.round((D(b)-D(a))/864e5);
+const monday = s => addDays(s, -((D(s).getUTCDay()+6)%7));
+const MES = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+const DSEM = ["dom","seg","ter","qua","qui","sex","sáb"];
+const fdm = s => s ? s.slice(8,10)+"/"+s.slice(5,7) : "—";
+const fdma = s => s ? s.slice(8,10)+"/"+s.slice(5,7)+"/"+s.slice(0,4) : "—";
+const fmtN = n => Number(n).toLocaleString("pt-BR");
+const pct = (x,dec=1) => (x==null||isNaN(x)) ? "—" : (x*100).toFixed(dec).replace(".",",")+"%";
+const mesLbl = k => MES[+k.slice(5,7)-1]+"/"+k.slice(2,4);
+function isoWeek(s){
+  const d = D(s); const day = (d.getUTCDay()+6)%7; d.setUTCDate(d.getUTCDate()-day+3);
+  const y = d.getUTCFullYear(); const j4 = new Date(Date.UTC(y,0,4));
+  const w = 1 + Math.round(((d-j4)/864e5 - 3 + ((j4.getUTCDay()+6)%7))/7);
+  return {y, w, key: y+"-W"+String(w).padStart(2,"0")};
+}
+const wkKey = s => isoWeek(s).key;
+function serialToIso(n){ return addDays("1899-12-30", Math.floor(n)); }
+function toIsoDate(v){
+  if (v==null || v==="") return null;
+  if (typeof v === "number") return serialToIso(v);
+  if (v instanceof Date) return iso(new Date(Date.UTC(v.getFullYear(),v.getMonth(),v.getDate())));
+  const s = String(v).trim();
+  let m = s.match(/^(\d{2})\/(\d{2})\/(\d{4})/); if (m) return `${m[3]}-${m[2]}-${m[1]}`;
+  m = s.match(/^(\d{4})-(\d{2})-(\d{2})/); if (m) return `${m[1]}-${m[2]}-${m[3]}`;
+  return null;
+}
+function titleCase(s){
+  s = String(s||"").trim(); if (!s) return "";
+  return s.toLowerCase().replace(/(^|[\s\-\/(])([a-zà-ú])/g,(m,a,b)=>a+b.toUpperCase());
+}
+function loadScript(urls){
+  return new Promise((res,rej)=>{ let i=0; const next=()=>{ if(i>=urls.length) return rej(new Error("Falha ao carregar biblioteca: "+urls[0]));
+    const s=document.createElement("script"); s.src=urls[i++]; s.onload=res; s.onerror=()=>{s.remove();next();}; document.head.appendChild(s); }; next(); });
+}
+function overlay(msg, err){ const o=$("#overlay"); if(msg==null){o.classList.add("hidden");return;} o.classList.remove("hidden"); o.classList.toggle("err",!!err); $("#ovmsg").innerHTML=msg; }
+
+/* =================== leitura dos dados =================== */
+const BASE_SET = new Set(BASE.placas.map(p=>p.p));
+const COND_MAP = new Map(BASE.condutores.map(n=>[norm(n), n]));
+
+function parseProntuario(ab){
+  const wb = XLSX.read(ab, {type:"array"});
+  const findSheet = t => wb.SheetNames.find(n => norm(n).startsWith(norm(t)));
+  const shI = findSheet("Inspeções últimos"), shP = findSheet("Prontuário Equipamentos");
+  if (!shI) throw new Error("A aba “Inspeções últimos 60 dias” não foi encontrada. Confira se o arquivo é o prontuário de equipamentos.");
+  /* --- inspeções --- */
+  const rI = XLSX.utils.sheet_to_json(wb.Sheets[shI], {header:1, raw:true, defval:null});
+  const h = rI.findIndex(r => r && r.includes("Identificador"));
+  if (h < 0) throw new Error("Cabeçalho da aba de inspeções não encontrado.");
+  const cab = rI[h].map(c => String(c??"").trim()), ci = n => cab.indexOf(n);
+  const C = {id:ci("Identificador"), d:ci("Date de Execução"), ck:ci("Checklist"), tp:ci("Tipo de Inspeção"), rs:ci("Responsável"), pf:ci("Perfil Responsável"), tr:ci("Transportador")};
+  if (C.d < 0) C.d = cab.findIndex(c => /execu/i.test(c));
+  const insp = [];
+  for (let i=h+1;i<rI.length;i++){
+    const r = rI[i]; if (!r || !r[C.id]) continue;
+    const d = toIsoDate(r[C.d]); if (!d) continue;
+    insp.push(rec(d, r[C.id], C.ck>=0 ? r[C.ck] : r[C.tp], r[C.rs], r[C.pf], r[C.tr]));
+  }
+  /* --- prontuário --- */
+  const pront = new Map(); let geracao = null;
+  if (shP){
+    const rP = XLSX.utils.sheet_to_json(wb.Sheets[shP], {header:1, raw:true, defval:null});
+    const g0 = rP[0] || [];
+    const gi = g0.findIndex(c => /gera/i.test(String(c||"")));
+    if (gi >= 0 && typeof g0[gi+1] === "number"){ const n=g0[gi+1]; const mins=Math.round((n-Math.floor(n))*1440); geracao = {d:serialToIso(n), h:String(Math.floor(mins/60)).padStart(2,"0")+":"+String(mins%60).padStart(2,"0")}; }
+    const g = rP.findIndex(r => r && r.includes("Identificador"));
+    if (g >= 0){
+      const G = rP[g].map(c=>String(c??"").trim()), S = (rP[g+1]||[]).map(c=>String(c??"").trim());
+      const col = (gn, sn) => G.findIndex((x,i) => x===gn && (sn==null || S[i]===sn));
+      const P = {tipo:col("Tipo de Equipamento"), tr:col("Transportador"), id:col("Identificador"), marca:col("Marca"), modelo:col("Modelo"),
+                 sit:col("Situação","Situação"), mot:col("Motivo"), itens:col("Itens Negativados em Inspeções"), uni:col("Unidade")};
+      const dts = CFG.CHECKLISTS.map(n => col(n, "Date de Execução")).filter(i=>i>=0);
+      const start = S.includes("Date de Execução") ? g+2 : g+1;
+      for (let i=start;i<rP.length;i++){
+        const r = rP[i]; if (!r || !r[P.id]) continue;
+        const id = String(r[P.id]).trim().toUpperCase();
+        let ult = null; dts.forEach(c => { const d = toIsoDate(r[c]); if (d && (!ult || d>ult)) ult = d; });
+        const o = {tipo:titleCase(r[P.tipo]), transp:String(r[P.tr]||"").replace(/^\d+\.\s*/,"").trim(), sit:String(r[P.sit]||"").trim(),
+                   motivo:String(r[P.mot]||"").trim(), itens:String(r[P.itens]||"").trim(), unidade:String(r[P.uni]||"").trim(), ult};
+        const prev = pront.get(id);
+        if (!prev || (o.ult||"") > (prev.ult||"")) pront.set(id, o);
+      }
+    }
+  }
+  return {insp, pront, geracao};
+}
+function rec(d, placa, ck, resp, perfil, transp){
+  const r = String(resp||"").replace(/[\s\u00a0]+/g," ").trim().toUpperCase();
+  return {d, placa:String(placa||"").trim().toUpperCase(), ck:String(ck||"").trim(), resp:r, respN:norm(r), perfil:String(perfil||"").trim(), transp:String(transp||"").replace(/^\d+\.\s*/,"").trim()};
+}
+function parseCSV(txt){
+  txt = txt.replace(/^\uFEFF/,""); const rows=[]; let row=[], f="", q=false;
+  for (let i=0;i<txt.length;i++){ const c=txt[i];
+    if (q){ if (c==='"'){ if (txt[i+1]==='"'){f+='"';i++;} else q=false; } else f+=c; }
+    else if (c==='"') q=true; else if (c===','){row.push(f);f="";} else if (c==='\n'){row.push(f);rows.push(row);row=[];f="";} else if (c!=='\r') f+=c; }
+  if (f!=="" || row.length){row.push(f);rows.push(row);}
+  const hd = rows.shift()||[]; const ix = n => hd.indexOf(n);
+  const I = {d:ix("data"), id:ix("identificador"), ck:ix("checklist"), rs:ix("responsavel"), pf:ix("perfil"), tr:ix("transportador")};
+  return rows.filter(r=>r.length>1 && r[I.d]).map(r => rec(r[I.d], r[I.id], r[I.ck], r[I.rs], r[I.pf], r[I.tr]));
+}
+
+/* =================== estado =================== */
+let DATA = null;           // {insp, pront, geracao, minD, maxD, semanas[], meses[]}
+const ST = {modo:"semana", semanas:new Set(), mes:"", de:"", ate:"", tipo:"", transp:"", check:"", fPlaca:"", qPlaca:"", sort:{k:"chk", dir:-1}};
+const CH = {};
+
+function prepare(p, hist){
+  const ini0 = CFG.DATA_INICIO || "0000";
+  const corteIni = [].concat(p.insp, hist||[]).some(r => r.d < ini0);   // havia dados antes do início -> cobertura começa no início
+  let insp = p.insp.filter(r => r.d >= ini0);
+  if (hist) hist = hist.filter(r => r.d >= ini0);
+  if (hist && hist.length && insp.length){
+    const corte = insp.reduce((m,r)=>r.d<m?r.d:m, insp[0].d);
+    insp = hist.filter(r => r.d < corte).concat(insp);
+  } else if (hist && hist.length) insp = hist;
+  const hoje = p.geracao ? p.geracao.d : insp.reduce((m,r)=>r.d>m?r.d:m, "0000");
+  let minD = insp.length ? insp.reduce((m,r)=>r.d<m?r.d:m, insp[0].d) : hoje;
+  if (corteIni) minD = ini0;
+  const semanas = []; for (let m=monday(minD); m<=hoje; m=addDays(m,7)){ const k=wkKey(m); semanas.push({key:k, lbl:"W"+isoWeek(m).w, ini:m, fim:addDays(m,6), parcial: m<minD || addDays(m,6)>hoje}); }
+  const meses = []; for (let k=minD.slice(0,7); k<=hoje.slice(0,7); ){ const ini=k+"-01"; const nx = (+k.slice(5,7)===12) ? (+k.slice(0,4)+1)+"-01" : k.slice(0,4)+"-"+String(+k.slice(5,7)+1).padStart(2,"0"); const fim=addDays(nx+"-01",-1);
+    meses.push({key:k, lbl:mesLbl(k), ini, fim, parcial: ini<minD || fim>hoje}); k=nx; }
+  /* placas da base com atributos */
+  const placas = BASE.placas.map(b => { const pr = p.pront.get(b.p) || {};
+    return {p:b.p, tipo: pr.tipo || titleCase(b.t) || "Não informado", transp: pr.transp || "Não informado", sit: pr.sit || "", motivo: pr.motivo||"", itens: pr.itens||"", ultPront: pr.ult||null, noPront: !p.pront.has(b.p)}; });
+  /* última inspeção considerando também a base de 60 dias / histórico */
+  const ultInsp = new Map();
+  insp.forEach(r => { if (CFG.CHECKLISTS.includes(r.ck) && (!ultInsp.has(r.placa) || r.d > ultInsp.get(r.placa))) ultInsp.set(r.placa, r.d); });
+  placas.forEach(x => { const a=x.ultPront, b=ultInsp.get(x.p)||null; x.ult = (a&&b) ? (a>b?a:b) : (a||b); x.dias = x.ult ? diffDays(x.ult, hoje) : null; });
+  DATA = {insp, pront:p.pront, geracao:p.geracao, hoje, minD, semanas, meses, placas};
+}
+
+/* =================== período =================== */
+function periodo(){
+  const S = DATA.semanas;
+  if (ST.modo === "semana"){
+    const sel = S.filter(s => ST.semanas.has(s.key));
+    const keys = new Set(sel.map(s=>s.key));
+    const ini = sel.length ? sel[0].ini : null, fim = sel.length ? sel[sel.length-1].fim : null;
+    const lbl = sel.length===1 ? sel[0].lbl : (sel.length ? sel.map(s=>s.lbl).join(", ") : "—");
+    let prev = null;
+    const idx = sel.map(x=>S.indexOf(x)); const contig = idx.every((v,i)=>i===0||v===idx[i-1]+1);
+    if (sel.length && contig){ const i0 = S.indexOf(sel[0]); const n = sel.length; if (i0-n >= 0){ const ps = S.slice(i0-n, i0); prev = {weeks:ps, test:d=>ps.some(s=>d>=s.ini&&d<=s.fim), lbl: n===1 ? ps[0].lbl : "semanas anteriores", parcial: ps.some(s=>s.parcial)}; } }
+    return {test:d=>keys.has(wkKey(d)), weeks:sel, ini, fim, lbl, titulo: sel.length===1 ? sel[0].lbl : (sel.length+" semanas"), prev, contig, sub: contig ? null : sel.map(s=>s.lbl).join(", "),
+            parcial: sel.some(s=>s.parcial)};
+  }
+  let ini, fim, titulo, lbl, prevIni, prevFim, prevLbl;
+  if (ST.modo === "mes"){
+    const m = DATA.meses.find(x=>x.key===ST.mes) || DATA.meses[DATA.meses.length-1];
+    ini=m.ini; fim=m.fim; titulo = MES[+m.key.slice(5,7)-1].replace(/^./,c=>c.toUpperCase())+"/"+m.key.slice(0,4); lbl=m.lbl;
+    const im = DATA.meses.indexOf(m); if (im>0){ prevIni=DATA.meses[im-1].ini; prevFim=DATA.meses[im-1].fim; prevLbl=DATA.meses[im-1].lbl; }
+  } else {
+    ini = ST.de || DATA.minD; fim = ST.ate || DATA.hoje; if (fim<ini) [ini,fim]=[fim,ini];
+    titulo = fdma(ini)+" a "+fdma(fim); lbl = fdm(ini)+"–"+fdm(fim);
+    const n = diffDays(ini,fim)+1; prevFim = addDays(ini,-1); prevIni = addDays(ini,-n); prevLbl = "período anterior";
+  }
+  const weeks = DATA.semanas.filter(s => s.fim>=ini && s.ini<=fim);
+  let prev = null;
+  if (prevIni && prevFim >= DATA.minD){ const pw = DATA.semanas.filter(s=>s.fim>=prevIni&&s.ini<=prevFim);
+    prev = {test:d=>d>=prevIni&&d<=prevFim, weeks:pw, lbl:prevLbl, parcial: prevIni<DATA.minD}; }
+  return {test:d=>d>=ini&&d<=fim, weeks, ini, fim, lbl, titulo, prev, parcial: ini<DATA.minD || fim>DATA.hoje};
+}
+
+/* =================== cálculo =================== */
+function universo(){ return DATA.placas.filter(x => (!ST.tipo || x.tipo===ST.tipo) && (!ST.transp || x.transp===ST.transp)); }
+function inspValidas(U){
+  const us = new Set(U.map(x=>x.p)); const cks = ST.check ? [ST.check] : CFG.CHECKLISTS;
+  return DATA.insp.filter(r => us.has(r.placa) && cks.includes(r.ck));
+}
+function calcular(){
+  const U = universo(), N = U.length, IV = inspValidas(U), P = periodo();
+  const rows = IV.filter(r => P.test(r.d));
+  const porPlaca = new Map();   // placa -> {n, semanas:Set, ult}
+  rows.forEach(r => { let o = porPlaca.get(r.placa); if(!o){o={n:0,sem:new Set(),ult:null};porPlaca.set(r.placa,o);} o.n++; o.sem.add(wkKey(r.d)); if(!o.ult||r.d>o.ult)o.ult=r.d; });
+  const ader = porPlaca.size, conf = N ? ader/N : null;
+  /* média semanal (para períodos com >1 semana) */
+  const semConf = P.weeks.map(w => { const s=new Set(rows.filter(r=>r.d>=w.ini&&r.d<=w.fim).map(r=>r.placa)); return N ? s.size/N : 0; });
+  const media = semConf.length ? semConf.reduce((a,b)=>a+b,0)/semConf.length : null;
+  /* período anterior */
+  let prev = null;
+  if (P.prev){ const pr = IV.filter(r=>P.prev.test(r.d)); const s = new Set(pr.map(r=>r.placa)); prev = {chk:pr.length, ader:s.size, conf: N? s.size/N : null, lbl:P.prev.lbl, parcial:P.prev.parcial}; }
+  /* condutores */
+  const cond = new Map(BASE.condutores.map(n=>[n,{nome:n,n:0,pl:new Set(),ult:null}]));
+  const outros = new Map(); let outrosN = 0; const outrosPl = new Set(); let outrosUlt=null;
+  rows.forEach(r => { const nm = COND_MAP.get(r.respN);
+    if (nm){ const o=cond.get(nm); o.n++; o.pl.add(r.placa); if(!o.ult||r.d>o.ult)o.ult=r.d; }
+    else { outrosN++; outrosPl.add(r.placa); outros.set(r.resp||"(sem nome)", (outros.get(r.resp||"(sem nome)")||0)+1); if(!outrosUlt||r.d>outrosUlt)outrosUlt=r.d; } });
+  const condAtivos = [...cond.values()].filter(c=>c.n>0).length;
+  /* por tipo / transportador */
+  const agrupa = campo => { const m=new Map(); U.forEach(x=>{ const k=x[campo]; const o=m.get(k)||{k,t:0,a:0}; o.t++; if(porPlaca.has(x.p))o.a++; m.set(k,o); }); return [...m.values()].sort((a,b)=> b.t-a.t || a.k.localeCompare(b.k)); };
+  /* por dia */
+  const porDia = new Map(); rows.forEach(r=>porDia.set(r.d,(porDia.get(r.d)||0)+1));
+  const placasDia = new Map(); rows.forEach(r=>{ let m=placasDia.get(r.d); if(!m){m=new Map();placasDia.set(r.d,m);} m.set(r.placa,(m.get(r.placa)||0)+1); });
+  const porCk = {}; rows.forEach(r=>porCk[r.ck]=(porCk[r.ck]||0)+1);
+  /* históricos */
+  const fimRef = P.fim && P.fim<DATA.hoje ? P.fim : DATA.hoje;
+  const iFim = DATA.semanas.findIndex(s=>s.ini<=fimRef && s.fim>=fimRef);
+  const hs = DATA.semanas.slice(Math.max(0,(iFim<0?DATA.semanas.length:iFim+1)-CFG.SEMANAS_HIST), iFim<0?DATA.semanas.length:iFim+1)
+    .map(w => { const rr=IV.filter(r=>r.d>=w.ini&&r.d<=w.fim); const s=new Set(rr.map(r=>r.placa)); return {w, conf:N?s.size/N:0, ader:s.size, chk:rr.length}; });
+  const hm = DATA.meses.slice(-CFG.MESES_HIST).map(m => { const rr=IV.filter(r=>r.d>=m.ini&&r.d<=m.fim); const s=new Set(rr.map(r=>r.placa)); return {m, conf:N?s.size/N:0, ader:s.size, chk:rr.length}; });
+  return {U, N, P, rows, porPlaca, ader, conf, media, semConf, prev, cond:[...cond.values()], condAtivos, outros, outrosN, outrosPl, outrosUlt,
+          porTipo:agrupa("tipo"), porDia, placasDia, porCk, hs, hm};
+}
+function corConf(c){ if (c==null) return "light"; return c>=CFG.FAIXA_VERDE ? "green" : c>=CFG.FAIXA_AMARELA ? "amber" : "red"; }
+
+/* =================== gráficos =================== */
+const FONT = getComputedStyle(document.body).fontFamily;
+const COR = {navy:"#0b1f4b", navy2:"#13306e", red:"#d7000f", green:"#1e9e5a", amber:"#e8a317", grey:"#c9ced8", greyL:"#e3e7ee", ink:"#1b2333", ink2:"#4a5468", muted:"#7b8496", teal:"#2d5d73"};
+const VLabels = { id:"vlabels", afterDatasetsDraw(chart, a, o){
+  if (!o || !o.fmt) return; const {ctx} = chart; ctx.save(); ctx.font = "600 11px "+FONT; ctx.fillStyle = COR.ink;
+  const horiz = chart.options.indexAxis === "y";
+  chart.data.datasets.forEach((ds,di) => { const meta = chart.getDatasetMeta(di); if (meta.hidden || ds.noLabels) return;
+    meta.data.forEach((el,i) => { const t = o.fmt(ds.data[i], i, di); if (t==null || t==="") return;
+      if (horiz){ ctx.textAlign="left"; ctx.textBaseline="middle"; ctx.fillText(t, el.x+6, el.y); }
+      else { ctx.textAlign="center"; ctx.textBaseline="bottom"; ctx.fillText(t, el.x, el.y-(chart.config.type==="line"?9:4)); } }); });
+  ctx.restore(); } };
+const Center = { id:"center", afterDraw(chart, a, o){
+  if (!o || !o.text) return; const {ctx, chartArea:ca} = chart; const x=(ca.left+ca.right)/2, y=(ca.top+ca.bottom)/2;
+  ctx.save(); ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillStyle=o.color||COR.ink; ctx.font="700 26px "+FONT; ctx.fillText(o.text, x, y-8);
+  ctx.font="500 12px "+FONT; ctx.fillStyle=COR.muted; ctx.fillText(o.sub||"", x, y+15); ctx.restore(); } };
+function chart(id, cfg){ if (CH[id]) CH[id].destroy(); CH[id] = new Chart(document.getElementById(id), cfg); return CH[id]; }
+function baseOpts(extra){
+  extra = extra || {}; const pl = extra.plugins || {};
+  const tt = Object.assign({backgroundColor:"#1b2333", padding:10, cornerRadius:8, titleFont:{family:FONT,weight:"600"}, bodyFont:{family:FONT}}, pl.tooltip||{});
+  return Object.assign({responsive:true, maintainAspectRatio:false, animation:{duration:250}}, extra,
+    {plugins: Object.assign({legend:{display:false}}, pl, {tooltip:tt})});
+}
+const curto = (s,n) => s.length>n ? s.slice(0,n-1)+"…" : s;
+function axisPct(max){ return {beginAtZero:true, suggestedMax:max, grid:{color:COR.greyL}, border:{display:false}, ticks:{color:COR.muted, font:{family:FONT,size:11}, callback:v=>(v*100).toFixed(0)+"%"}}; }
+const axisCat = {grid:{display:false}, border:{color:COR.greyL}, ticks:{color:COR.ink2, font:{family:FONT,size:11}}};
+
+function renderCharts(R){
+  /* rosca */
+  const nad = R.N - R.ader;
+  chart("cDonut", {type:"doughnut", data:{labels:["Aderentes","Não aderentes"], datasets:[{data:[R.ader, nad], backgroundColor:[COR.green, COR.red], borderColor:"#fff", borderWidth:2, hoverOffset:4}]},
+    options: baseOpts({cutout:"64%", plugins:{legend:{display:true, position:"bottom", labels:{usePointStyle:true, pointStyle:"rectRounded", font:{family:FONT,size:12}, color:COR.ink2,
+      generateLabels: c => c.data.labels.map((l,i)=>({text:`${l}: ${fmtN(c.data.datasets[0].data[i])} (${pct(R.N?c.data.datasets[0].data[i]/R.N:0)})`, fillStyle:c.data.datasets[0].backgroundColor[i], strokeStyle:"#fff", pointStyle:"rectRounded", index:i}))}},
+      tooltip:{callbacks:{label:c=>` ${c.label}: ${fmtN(c.raw)} veículos (${pct(R.N?c.raw/R.N:0)})`}}, center:{text:pct(R.conf,2), sub:`${R.ader}/${R.N} veículos`}}})});
+  /* histórico semanal */
+  const hs = R.hs, selK = new Set(R.P.weeks.map(w=>w.key));
+  const maxS = Math.max(0.05, ...hs.map(x=>x.conf))*1.25;
+  chart("cSemanal", {type:"line", data:{labels: hs.map(x=>x.w.lbl+(x.w.parcial?"*":"")), datasets:[{data: hs.map(x=>x.conf), borderColor:COR.navy, backgroundColor:"rgba(11,31,75,.07)", fill:true, borderWidth:2, tension:.25,
+      pointRadius: hs.map(x=>selK.has(x.w.key)?6:4), pointHoverRadius:7, pointBackgroundColor: hs.map(x=>selK.has(x.w.key)?COR.red:COR.navy), pointBorderColor:"#fff", pointBorderWidth:2,
+      segment:{borderDash: c => (hs[c.p1DataIndex] && hs[c.p1DataIndex].w.parcial) ? [5,4] : undefined}}]},
+    options: baseOpts({layout:{padding:{top:18}}, scales:{y:axisPct(maxS), x:axisCat},
+      plugins:{vlabels:{fmt:(v,i)=> (selK.has(hs[i].w.key) || i===hs.length-1 || hs.length<=8) ? pct(v) : ""},
+        tooltip:{callbacks:{title:c=>{const w=hs[c[0].dataIndex].w; return `${w.lbl} · ${fdm(w.ini)} a ${fdm(w.fim)}${w.parcial?" (parcial)":""}`;}, label:c=>{const x=hs[c.dataIndex]; return [` Aderência: ${pct(x.conf,2)}`, ` Veículos: ${x.ader}/${R.N}`, ` Checklists: ${x.chk}`];}}}}})});
+  /* histórico mensal */
+  const hm = R.hm; const maxM = Math.max(0.05, ...hm.map(x=>x.conf))*1.25;
+  chart("cMensal", {type:"bar", data:{labels: hm.map(x=>x.m.lbl+(x.m.parcial?"*":"")), datasets:[{data:hm.map(x=>x.conf), backgroundColor: hm.map(x=> x.m.parcial ? "rgba(11,31,75,.32)" : COR.navy), borderRadius:4, maxBarThickness:56}]},
+    options: baseOpts({layout:{padding:{top:18}}, scales:{y:axisPct(maxM), x:axisCat}, plugins:{vlabels:{fmt:v=>pct(v)},
+      tooltip:{callbacks:{title:c=>{const m=hm[c[0].dataIndex].m; return m.lbl+(m.parcial?" (cobertura parcial)":"");}, label:c=>{const x=hm[c.dataIndex]; return [` Aderência: ${pct(x.conf,2)}`, ` Veículos: ${x.ader}/${R.N}`, ` Checklists: ${x.chk}`];}}}}})});
+  /* checklists por dia / semana */
+  const P = R.P; let labels=[], vals=[], tips=[], pls=[];
+  const juntaPl = (ini,fim) => { const m=new Map(); R.placasDia.forEach((pm,d)=>{ if(d>=ini&&d<=fim) pm.forEach((n,pl)=>m.set(pl,(m.get(pl)||0)+n)); }); return [...m.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])); };
+  const ini = P.ini, fim = P.fim && P.fim<DATA.hoje ? P.fim : DATA.hoje;
+  if (ini && fim && ini<=fim){
+    const nd = diffDays(ini, fim)+1;
+    if (ST.modo==="semana" && P.weeks.length>1 || nd>62){
+      const ws = ST.modo==="semana" ? P.weeks : DATA.semanas.filter(s=>s.fim>=ini&&s.ini<=fim);
+      ws.forEach(w=>{ let n=0; R.porDia.forEach((v,d)=>{ if(d>=w.ini&&d<=w.fim) n+=v; }); labels.push(w.lbl); vals.push(n); tips.push(`${w.lbl} · ${fdm(w.ini)} a ${fdm(w.fim)}`); pls.push(juntaPl(w.ini,w.fim)); });
+      $("#tDia").textContent = "Checklists por semana"; $("#hDia").textContent = "Quantidade de checklists realizados em cada semana do período. Passe o mouse para ver as placas.";
+    } else {
+      for (let d=ini; d<=fim; d=addDays(d,1)){ if (ST.modo==="semana" && !P.test(d)) continue; labels.push((nd<=8? DSEM[D(d).getUTCDay()]+" ":"")+fdm(d)); vals.push(R.porDia.get(d)||0); tips.push(DSEM[D(d).getUTCDay()]+" "+fdma(d)); pls.push(juntaPl(d,d)); }
+      $("#tDia").textContent = "Checklists por dia"; $("#hDia").textContent = "Quantidade de checklists realizados em cada dia do período. Passe o mouse para ver as placas.";
+    }
+  }
+  chart("cDia", {type:"bar", data:{labels, datasets:[{data:vals, backgroundColor:COR.teal, borderRadius:4, maxBarThickness:42}]},
+    options: baseOpts({layout:{padding:{top:16}}, scales:{y:{beginAtZero:true, grid:{color:COR.greyL}, border:{display:false}, ticks:{precision:0, color:COR.muted, font:{family:FONT,size:11}}}, x:axisCat},
+      plugins:{vlabels:{fmt:v=> (v && labels.length<=31) ? v : ""}, tooltip:{callbacks:{title:c=>tips[c[0].dataIndex], label:c=>` ${c.raw} checklist(s)`,
+        afterBody:c=>{ const l=pls[c[0].dataIndex]||[]; if(!l.length) return []; const top=l.slice(0,15).map(([pl,n])=>`  ${pl}${n>1?` (${n})`:""}`); return ["Placas:"].concat(top, l.length>15?[`  + ${l.length-15} placa(s)`]:[]); }}}}})});
+  /* por tipo / transportador */
+  hbar("cTipo", "bxTipo", R.porTipo);
+}
+function hbar(id, box, arr){
+  $("#"+box).style.height = Math.max(180, arr.length*30+40)+"px";
+  chart(id, {type:"bar", data:{labels:arr.map(x=>curto(x.k, x.k===x.k.toUpperCase()?17:22)), datasets:[
+      {data:arr.map(x=>x.t?x.a/x.t:0), backgroundColor:arr.map(x=>COR.green), borderRadius:4, maxBarThickness:18, barPercentage:.8}]},
+    options: baseOpts({indexAxis:"y", layout:{padding:{right:92}}, scales:{x:Object.assign(axisPct(1),{max:1}), y:Object.assign({}, axisCat, {ticks:{color:COR.ink2, font:{family:FONT,size:11.5}, autoSkip:false}})},
+      plugins:{vlabels:{fmt:(v,i)=>`${arr[i].a}/${arr[i].t} · ${pct(v,0)}`}, tooltip:{callbacks:{title:c=>arr[c[0].dataIndex].k, label:c=>{const x=arr[c.dataIndex]; return ` ${x.a} de ${x.t} veículos aderentes (${pct(c.raw)})`;}}}}})});
+}
+
+/* =================== KPIs, período e destaques =================== */
+function deltaHtml(cur, prev, isPct, lbl){
+  if (prev==null || cur==null) return "";
+  const d = cur - prev; if (Math.abs(d) < 1e-9) return `<span>= ${esc(lbl)}</span>`;
+  const t = isPct ? (Math.abs(d)*100).toFixed(1).replace(".",",")+" p.p." : fmtN(Math.abs(d));
+  return `<span class="delta ${d>0?"up":"down"}">${d>0?"▲":"▼"} ${t}</span> vs ${esc(lbl)}`;
+}
+function renderTopo(R){
+  const P = R.P, g = DATA.geracao;
+  $("#meta").innerHTML = `Extração do prontuário: <b>${g?fdma(g.d)+" "+g.h:"—"}</b><br>Inspeções disponíveis: <b>${fdma(DATA.minD)}</b> a <b>${fdma(DATA.hoje)}</b><br>Base fixa: <b>${BASE.placas.length} placas</b> · atualizada em ${esc(BASE.atualizada)}`;
+  const rng = P.ini ? `${fdma(P.ini)} a ${fdma(P.fim)}` : "";
+  const filtros = [ST.tipo, ST.transp, ST.check].filter(Boolean);
+  $("#periodo").innerHTML = `<h2>${esc(P.titulo)}</h2>${ST.modo==="periodo"?"":`<span class="sub">${P.sub ? esc(P.sub)+" (semanas não consecutivas)" : rng}</span>`}` +
+    (P.parcial ? ` <span class="badge warn" title="O período inclui dias sem dados (antes da 1ª inspeção disponível ou depois da extração).">período parcial</span>` : "") +
+    filtros.map(f=>` <span class="badge info">${esc(f)}</span>`).join("");
+  const pv = R.prev, pl = pv ? pv.lbl : "";
+  const ck = Object.entries(R.porCk).map(([k,v])=>`${k.replace("Inspeção ","").replace("de ","")} ${v}`).join(" · ");
+  const bloq = R.U.filter(x=>/bloq/i.test(x.sit)).length, aten = R.U.filter(x=>/aten/i.test(x.sit)).length;
+  const semInsp = R.U.filter(x=>x.dias==null || x.dias>CFG.DIAS_ALERTA).length, nunca = R.U.filter(x=>x.dias==null).length;
+  const cc = corConf(R.conf);
+  $("#kpis").innerHTML = `
+    <div class="kpi"><div class="v">${fmtN(R.rows.length)}</div><div class="l">Checklists realizados</div><div class="s">${pv?deltaHtml(R.rows.length,pv.chk,false,pl):(ck||"&nbsp;")}</div></div>
+    <div class="kpi"><div class="v">${R.ader}/${R.N}</div><div class="l">Veículos aderentes</div><div class="s">${pv?deltaHtml(R.ader,pv.ader,false,pl):"&nbsp;"}</div></div>
+    <div class="kpi ${cc}"><div class="v">${pct(R.conf,2)}</div><div class="l">Conformidade da frota</div><div class="s">${pv?deltaHtml(R.conf,pv.conf,true,pl):""}${R.P.weeks.length>1?`${pv?"<br>":""}média semanal ${pct(R.media,2)}`:""}</div></div>
+    <div class="kpi light"><div class="v">${R.condAtivos}/${BASE.condutores.length}</div><div class="l">Condutores que fizeram checklist</div><div class="s">${R.outrosN?`+ ${R.outrosN} checklist(s) de outros responsáveis`:"&nbsp;"}</div></div>
+    <div class="kpi light"><div class="v ${bloq?"bad":""}">${bloq}</div><div class="l">Veículos bloqueados hoje</div><div class="s">${aten?aten+" em atenção · ":""}retrato de ${g?fdm(g.d):"—"}</div></div>
+    <div class="kpi light"><div class="v ${semInsp?"bad":""}">${semInsp}</div><div class="l">Sem inspeção há +${CFG.DIAS_ALERTA} dias</div><div class="s">${nunca} nunca inspecionado(s)</div></div>`;
+  /* destaques automáticos */
+  const li = [];
+  if (R.N){
+    li.push(`<b>${R.ader} de ${R.N}</b> veículos fizeram checklist (${pct(R.conf,2)}); <b>${R.N-R.ader}</b> não registraram nenhum checklist no período.`);
+    if (pv && pv.conf!=null){ const d=R.conf-pv.conf; li.push(Math.abs(d)<1e-9 ? `Aderência estável em relação a ${esc(pl)}.` : `Aderência ${d>0?"subiu":"caiu"} <b>${(Math.abs(d)*100).toFixed(1).replace(".",",")} p.p.</b> em relação a ${esc(pl)}${pv.parcial?" (comparação com dados parciais)":""}.`); }
+    const topP = [...R.porPlaca.entries()].sort((a,b)=>b[1].n-a[1].n)[0];
+    if (topP) li.push(`Placa com mais checklists: <b>${esc(topP[0])}</b> (${topP[1].n}). ${R.porPlaca.size>1?`Os checklists se concentram em ${R.porPlaca.size} veículo(s).`:""}`);
+    const topC = R.cond.filter(c=>c.n).sort((a,b)=>b.n-a.n)[0];
+    if (topC) li.push(`Condutor mais ativo: <b>${esc(titleCase(topC.nome))}</b> (${topC.n} checklist${topC.n>1?"s":""}); ${BASE.condutores.length-R.condAtivos} condutor(es) da lista não registraram checklist.`);
+    else li.push(`Nenhum condutor da lista fixa registrou checklist no período.`);
+    if (semInsp) li.push(`<b>${semInsp}</b> veículo(s) estão há mais de ${CFG.DIAS_ALERTA} dias sem inspeção Condutor/Segurança${nunca?` (${nunca} sem nenhuma inspeção registrada)`:""}.`);
+    if (bloq) li.push(`<b>${bloq}</b> veículo(s) da base estão bloqueados no Frota Legal hoje.`);
+  }
+  $("#insights").innerHTML = `<h3>Destaques do período</h3><ul>${li.map(x=>"<li>"+x+"</li>").join("")}</ul>`;
+}
+
+/* =================== tabelas =================== */
+function linhasPlacas(R){
+  return R.U.map(x => { const o = R.porPlaca.get(x.p);
+    return {p:x.p, tipo:x.tipo, transp:x.transp, chk:o?o.n:0, sem:o?o.sem:new Set(), nsem:o?o.sem.size:0, ult:x.ult, dias:x.dias, sit:x.sit, motivo:x.motivo, itens:x.itens}; });
+}
+function stHtml(s){ const k = /bloq/i.test(s)?"bl":/aten/i.test(s)?"at":/liber/i.test(s)?"ok":"na"; return `<span class="st ${k}"><i></i>${esc(s||"Sem cadastro")}</span>`; }
+function resumoMotivo(x){
+  const it = itensDe(x.itens).map(i=>i.item); const m = x.motivo.replace(/ITENS DE INSPEÇÃO:\s*/i,"").replace(/\s+/g," ").trim();
+  if (it.length) return it.slice(0,4).join("; ")+(it.length>4?` (+${it.length-4})`:"");
+  return /bloq|aten/i.test(x.sit) ? m : "";
+}
+function renderPlacas(R){
+  const W = R.P.weeks.slice(-13);
+  let L = linhasPlacas(R);
+  if (ST.fPlaca==="ad") L = L.filter(x=>x.chk>0); else if (ST.fPlaca==="nad") L = L.filter(x=>!x.chk); else if (ST.fPlaca==="bl") L = L.filter(x=>/bloq/i.test(x.sit));
+  if (ST.qPlaca) L = L.filter(x=>x.p.includes(ST.qPlaca.toUpperCase().replace(/[^A-Z0-9]/g,"")));
+  const {k, dir} = ST.sort;
+  L.sort((a,b)=>{ let va=a[k], vb=b[k]; if (k==="dias"){ va = va==null?1e9:va; vb = vb==null?1e9:vb; } if (k==="ult"){ va=va||""; vb=vb||""; }
+    if (typeof va==="number") return (va-vb)*dir || a.p.localeCompare(b.p); return String(va).localeCompare(String(vb))*dir || a.p.localeCompare(b.p); });
+  const th = (key, t, cls="") => `<th data-k="${key}" class="${cls}">${t}<span class="arr">${ST.sort.k===key?(ST.sort.dir>0?"▲":"▼"):"↕"}</span></th>`;
+  const head = `<thead><tr>${th("p","Placa")}${th("tipo","Tipo")}${th("chk","Checklists","num")}${th("nsem","Semanas aderentes")}${th("ult","Última inspeção")}${th("dias","Dias","num")}${th("sit","Status hoje")}<th>Itens negativados / motivo</th></tr></thead>`;
+  const body = L.map(x => `<tr><td class="mono">${x.p}</td><td>${esc(x.tipo)}</td><td class="num">${x.chk||'<span style="color:var(--muted)">0</span>'}</td>
+    <td style="white-space:nowrap"><span class="ws">${W.map(w=>`<b class="${x.sem.has(w.key)?"y":(w.parcial?"p":"")}" title="${w.lbl} (${fdm(w.ini)}–${fdm(w.fim)})${x.sem.has(w.key)?": fez checklist":""}"></b>`).join("")}</span><span class="pill ${x.nsem?(x.nsem===R.P.weeks.length?"g":"a"):"r"}">${x.nsem}/${R.P.weeks.length}</span></td>
+    <td>${fdma(x.ult)}</td><td class="num"><span class="dias ${x.dias==null||x.dias>CFG.DIAS_ALERTA?"bad":""}">${x.dias==null?"nunca":x.dias}</span></td><td>${stHtml(x.sit)}</td><td class="wrapc" title="${esc(x.motivo)}">${esc(resumoMotivo(x))}</td></tr>`).join("");
+  $("#tPlacas").innerHTML = head + `<tbody>${body || `<tr><td colspan="8" class="empty">Nenhuma placa para os filtros escolhidos.</td></tr>`}</tbody>`;
+  $("#cntPlacas").textContent = `${L.length} de ${R.U.length} placas`;
+  $("#tPlacas").querySelectorAll("th[data-k]").forEach(t => t.onclick = () => { const kk=t.dataset.k; ST.sort = {k:kk, dir: ST.sort.k===kk ? -ST.sort.dir : (["chk","nsem","dias","ult"].includes(kk)?-1:1)}; renderPlacas(R); });
+  CSV_PLACAS = [["Placa","Tipo","Checklists","Semanas aderentes","Semanas no período","Última inspeção","Dias sem inspeção","Status hoje","Itens/motivo"]]
+    .concat(L.map(x=>[x.p,x.tipo,x.chk,x.nsem,R.P.weeks.length,fdma(x.ult),x.dias==null?"nunca":x.dias,x.sit,resumoMotivo(x)]));
+}
+let CSV_PLACAS = [];
+function renderCond(R){
+  const L = R.cond.slice().sort((a,b)=>b.n-a.n || a.nome.localeCompare(b.nome));
+  const out = [...R.outros.entries()].sort((a,b)=>b[1]-a[1]);
+  const rows = L.map(c=>`<tr><td>${esc(titleCase(c.nome))}</td><td class="num">${c.n||'<span style="color:var(--muted)">0</span>'}</td><td class="num">${c.pl.size||""}</td><td>${c.ult?fdma(c.ult):""}</td></tr>`).join("");
+  const outRow = `<tr><td><details class="outros"><summary>Outros responsáveis (${out.length})</summary><div>${out.map(([n,v])=>`${esc(titleCase(n))} — ${v}`).join("<br>")||"—"}</div></details></td><td class="num">${R.outrosN||'<span style="color:var(--muted)">0</span>'}</td><td class="num">${R.outrosPl.size||""}</td><td>${R.outrosUlt?fdma(R.outrosUlt):""}</td></tr>`;
+  const tot = L.reduce((a,c)=>a+c.n,0)+R.outrosN;
+  $("#tCond").innerHTML = `<thead><tr><th>Condutor</th><th class="num">Checklists</th><th class="num">Veículos</th><th>Último</th></tr></thead><tbody>${rows}${outRow}<tr><td><b>Total</b></td><td class="num"><b>${tot}</b></td><td></td><td></td></tr></tbody>`;
+}
+
+/* =================== situação atual =================== */
+function itensDe(txt){
+  const out = []; if (!txt) return out;
+  txt.split(/\n\s*\n/).forEach(bl => { const ls = bl.split("\n").map(s=>s.trim()).filter(Boolean); if (!ls.length) return;
+    const ck = ls[0].replace(/:$/,"").trim(); if (!CFG.CHECKLISTS.some(c=>norm(c)===norm(ck))) return;
+    ls.slice(1).join(" ").split(/,(?=\s*\d)/).forEach(it => { let s = it.replace(/[;,]\s*$/,"").trim(); const bloq = /causa bloqueio/i.test(s);
+      s = s.replace(/^\s*[\d.]+\s*-\s*/,"").replace(/\(NOK=Causa Bloqueio\)/i,"").trim(); if (s) out.push({ck, item:s, bloq}); }); });
+  return out;
+}
+function renderSituacao(R){
+  const U = R.U, g = DATA.geracao;
+  $("#retrato").textContent = g ? `— retrato do prontuário de ${fdma(g.d)} ${g.h} (não muda com o filtro de período)` : "";
+  const cats = [["Liberado",/liber/i,COR.green],["Atenção",/aten/i,COR.amber],["Bloqueado",/bloq/i,COR.red],["Sem cadastro",/^$/,COR.grey]];
+  const cnt = cats.map(([n,re])=>U.filter(x=>re.test(x.sit)).length);
+  const keep = cats.map((c,i)=>i).filter(i=>i<3||cnt[i]>0);
+  const tot = U.length;
+  chart("cStatus", {type:"pie", data:{labels:keep.map(i=>cats[i][0]), datasets:[{data:keep.map(i=>cnt[i]), backgroundColor:keep.map(i=>cats[i][2]), borderColor:"#fff", borderWidth:2, hoverOffset:4}]},
+    options: baseOpts({layout:{padding:6}, plugins:{legend:{display:true, position:"right", labels:{usePointStyle:true, pointStyle:"rectRounded", font:{family:FONT,size:12}, color:COR.ink2, padding:12,
+      generateLabels: c => c.data.labels.map((l,i)=>{ const v=c.data.datasets[0].data[i]; return {text:`${l}: ${v} (${v&&tot&&v/tot<0.01?"<1%":pct(tot?v/tot:0,0)})`, fillStyle:c.data.datasets[0].backgroundColor[i], strokeStyle:"#fff", pointStyle:"rectRounded", index:i}; })}},
+      tooltip:{callbacks:{label:c=>` ${c.label}: ${c.raw} veículo(s) (${pct(tot?c.raw/tot:0)})`}}}})});
+  /* motivos dos bloqueados */
+  const bl = U.filter(x=>/bloq|aten/i.test(x.sit)); const mot = {};
+  bl.forEach(x => { const m = x.motivo; const ks = [];
+    if (/ITENS DE INSPE/i.test(m)) ks.push("Item NOK em inspeção"); if (/tempor/i.test(m)) ks.push("Bloqueio temporário"); if (/a vencer/i.test(m)) ks.push("Inspeção a vencer");
+    if (/vencid/i.test(m)) ks.push("Inspeção/documento vencido"); if (!ks.length) ks.push(m ? "Outros" : "Sem motivo informado"); ks.forEach(k=>mot[k]=(mot[k]||0)+1); });
+  const mt = Object.entries(mot).sort((a,b)=>b[1]-a[1]);
+  $("#motivos").innerHTML = mt.length ? `<b>Motivos (bloqueado/atenção):</b> ` + mt.map(([k,v])=>`${esc(k)} <b>${v}</b>`).join(" · ") : "";
+  /* recência */
+  const bk = [["Até 7 dias",x=>x.dias!=null&&x.dias<=7,COR.green],["8 a 30 dias",x=>x.dias!=null&&x.dias>7&&x.dias<=30,"#7cc49b"],["31 a 90 dias",x=>x.dias!=null&&x.dias>30&&x.dias<=90,COR.amber],["Mais de 90 dias",x=>x.dias!=null&&x.dias>90,COR.red],["Nunca inspecionado",x=>x.dias==null,"#7a0010"]];
+  const bc = bk.map(([,f])=>U.filter(f).length);
+  chart("cRecencia", {type:"bar", data:{labels:bk.map(b=>b[0]), datasets:[{data:bc, backgroundColor:bk.map(b=>b[2]), borderRadius:4, maxBarThickness:22}]},
+    options: baseOpts({indexAxis:"y", layout:{padding:{right:70}}, scales:{x:{beginAtZero:true, grid:{color:COR.greyL}, border:{display:false}, ticks:{precision:0,color:COR.muted,font:{family:FONT,size:11}}}, y:axisCat},
+      plugins:{vlabels:{fmt:v=>`${v} · ${pct(U.length?v/U.length:0,0)}`}, tooltip:{callbacks:{label:c=>` ${c.raw} veículo(s)`}}}})});
+  /* itens */
+  const it = {}; U.forEach(x => itensDe(x.itens).forEach(i => { const k=i.item; it[k]=it[k]||{n:0,ck:new Set(),bloq:i.bloq}; it[k].n++; it[k].ck.add(i.ck); }));
+  const top = Object.entries(it).sort((a,b)=>b[1].n-a[1].n).slice(0,10);
+  if (!top.length){ if (CH.cItens){CH.cItens.destroy(); delete CH.cItens;} $("#bxItens").innerHTML = `<div class="empty">Nenhum item negativado pendente.</div><canvas id="cItens" class="hidden"></canvas>`; return; }
+  if (!document.getElementById("cItens") || $("#cItens").classList.contains("hidden")) $("#bxItens").innerHTML = `<canvas id="cItens"></canvas>`;
+  $("#bxItens").style.height = Math.max(220, top.length*26+30)+"px";
+  chart("cItens", {type:"bar", data:{labels:top.map(([k])=>curto(k,26)), datasets:[{data:top.map(([,v])=>v.n), backgroundColor:top.map(([,v])=>v.bloq?COR.red:COR.navy2), borderRadius:4, maxBarThickness:16}]},
+    options: baseOpts({indexAxis:"y", layout:{padding:{right:30}}, scales:{x:{beginAtZero:true, grid:{color:COR.greyL}, border:{display:false}, ticks:{precision:0,color:COR.muted,font:{family:FONT,size:11}}}, y:Object.assign({},axisCat,{ticks:{color:COR.ink2,font:{family:FONT,size:11},autoSkip:false}})},
+      plugins:{vlabels:{fmt:v=>v}, tooltip:{callbacks:{title:c=>top[c[0].dataIndex][0], label:c=>{const v=top[c.dataIndex][1]; return [` ${v.n} veículo(s)`, ` ${[...v.ck].join(", ")}`, v.bloq?" Causa bloqueio":" Não bloqueia"];}}}}})});
+}
+
+/* =================== notas técnicas (?admin=1) =================== */
+function renderAdmin(){
+  $("#nBase").textContent = `${BASE.placas.length} placas, atualizada em ${BASE.atualizada}`;
+  $("#lstCheck").textContent = CFG.CHECKLISTS.join(" e ");
+  if (!/[?&]admin=1/.test(location.search)) { $("#adminBox").innerHTML=""; return; }
+  const fora = {}; DATA.insp.forEach(r=>{ if (CFG.CHECKLISTS.includes(r.ck) && !BASE_SET.has(r.placa)) fora[r.placa]=(fora[r.placa]||0)+1; });
+  const fl = Object.entries(fora).sort((a,b)=>b[1]-a[1]);
+  const semPr = DATA.placas.filter(x=>x.noPront).map(x=>x.p);
+  const resp = {}; DATA.insp.forEach(r=>{ if (CFG.CHECKLISTS.includes(r.ck) && BASE_SET.has(r.placa) && !COND_MAP.has(r.respN)) resp[r.resp]=(resp[r.resp]||0)+1; });
+  $("#adminBox").innerHTML = `<div class="card admin"><b>Notas técnicas (equipe Demarco — visível só com ?admin=1)</b>
+    <h4>Inspeções válidas em placas fora da base fixa (${fl.reduce((a,b)=>a+b[1],0)} inspeções, ${fl.length} placas — não contabilizadas)</h4><div>${fl.map(([p,n])=>`${p} (${n})`).join(", ")||"—"}</div>
+    <h4>Placas da base sem cadastro no prontuário (${semPr.length})</h4><div>${semPr.join(", ")||"—"}</div>
+    <h4>Placas duplicadas na base fixa com tipos diferentes (${BASE.duplicadas.length})</h4><div>${BASE.duplicadas.map(d=>`${d.p}: ${d.tipos.join(" / ")}`).join("; ")||"—"}</div>
+    <h4>Responsáveis fora da lista de condutores (contam em “Outros”)</h4><div>${Object.entries(resp).sort((a,b)=>b[1]-a[1]).map(([n,v])=>`${esc(n)} (${v})`).join(", ")||"—"}</div></div>`;
+}
+
+/* =================== filtros (UI) =================== */
+function buildFiltros(){
+  const S = DATA.semanas;
+  const VIS = 13, ocultas = Math.max(0, S.length-VIS);
+  $("#chipsSemana").innerHTML = S.map((s,i)=>`<button class="chip ${s.parcial?"partial":""} ${i<ocultas?"old hidden":""}" data-k="${s.key}" title="${fdma(s.ini)} a ${fdma(s.fim)}${s.parcial?" — parcial":""}">${s.lbl}${s.parcial?"<small>*</small>":""}</button>`).join("");
+  $("#chipsSemana").querySelectorAll(".chip").forEach(b => {
+    b.onclick = () => { const k = b.dataset.k; if (ST.semanas.has(k)) { if (ST.semanas.size>1) ST.semanas.delete(k); } else ST.semanas.add(k); render(); };
+    b.ondblclick = () => { ST.semanas = new Set([b.dataset.k]); render(); };
+  });
+  const comp = S.filter(s=>s.fim < DATA.hoje);
+  $("#chipsSemana").insertAdjacentHTML("beforeend", `<button class="btn link" id="qUlt">última</button><button class="btn link" id="q4">últimas 4</button>${ocultas?`<button class="btn link" id="qTodas">+ ${ocultas} anteriores</button>`:""}`);
+  if (ocultas) $("#qTodas").onclick = () => { const on = $("#chipsSemana .chip.old.hidden"); $("#chipsSemana").querySelectorAll(".chip.old").forEach(c=>c.classList.toggle("hidden", !on)); $("#qTodas").textContent = on ? "ocultar anteriores" : `+ ${ocultas} anteriores`; };
+  $("#qUlt").onclick = () => { ST.semanas = new Set(comp.slice(-1).map(s=>s.key)); render(); };
+  $("#q4").onclick = () => { ST.semanas = new Set(comp.slice(-4).map(s=>s.key)); render(); };
+  $("#selMes").innerHTML = DATA.meses.slice().reverse().map(m=>`<option value="${m.key}">${MES[+m.key.slice(5,7)-1]}/${m.key.slice(0,4)}${m.parcial?" (parcial)":""}</option>`).join("");
+  $("#dDe").min = $("#dAte").min = DATA.minD; $("#dDe").max = $("#dAte").max = DATA.hoje;
+  const tipos = [...new Set(DATA.placas.map(x=>x.tipo))].sort(), trs = [...new Set(DATA.placas.map(x=>x.transp))].sort();
+  const cnt = (k,v) => DATA.placas.filter(x=>x[k]===v).length;
+  $("#selTipo").innerHTML = `<option value="">Todos</option>` + tipos.map(t=>`<option value="${esc(t)}">${esc(t)} (${cnt("tipo",t)})</option>`).join("");
+  $("#selTransp").innerHTML = `<option value="">Todos</option>` + trs.map(t=>`<option value="${esc(t)}">${esc(t)} (${cnt("transp",t)})</option>`).join("");
+  $("#selCheck").innerHTML = `<option value="">Todos</option>` + CFG.CHECKLISTS.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
+  padroes();
+}
+function padroes(){
+  const S = DATA.semanas; const comp = S.filter(s=>s.fim < DATA.hoje);   // semanas completas
+  const ult = comp.length ? comp[comp.length-1] : S[S.length-1];
+  ST.modo="semana"; ST.semanas = new Set(ult?[ult.key]:[]);
+  const mesUlt = ult ? ult.fim.slice(0,7) : DATA.hoje.slice(0,7); ST.mes = DATA.meses.some(m=>m.key===mesUlt) ? mesUlt : DATA.meses[DATA.meses.length-1].key;
+  ST.ate = DATA.hoje; ST.de = addDays(DATA.hoje,-29) < DATA.minD ? DATA.minD : addDays(DATA.hoje,-29);
+  ST.tipo = ST.transp = ST.check = ""; ST.fPlaca=""; ST.qPlaca="";
+}
+function syncUI(){
+  $("#modo").querySelectorAll("button").forEach(b=>b.classList.toggle("on", b.dataset.m===ST.modo));
+  $("#fSemana").classList.toggle("hidden", ST.modo!=="semana"); $("#fMes").classList.toggle("hidden", ST.modo!=="mes"); $("#fPeriodo").classList.toggle("hidden", ST.modo!=="periodo");
+  $("#chipsSemana").querySelectorAll(".chip").forEach(b=>b.classList.toggle("on", ST.semanas.has(b.dataset.k)));
+  $("#selMes").value = ST.mes; $("#dDe").value = ST.de; $("#dAte").value = ST.ate;
+  $("#selTipo").value = ST.tipo; $("#selTransp").value = ST.transp; $("#selCheck").value = ST.check;
+  $("#fPlaca").querySelectorAll("button").forEach(b=>b.classList.toggle("on", b.dataset.f===ST.fPlaca)); $("#qPlaca").value = ST.qPlaca;
+}
+function bindUI(){
+  $("#modo").querySelectorAll("button").forEach(b=>b.onclick=()=>{ ST.modo=b.dataset.m; render(); });
+  $("#selMes").onchange = e => { ST.mes=e.target.value; render(); };
+  $("#dDe").onchange = e => { ST.de=e.target.value||DATA.minD; render(); };
+  $("#dAte").onchange = e => { ST.ate=e.target.value||DATA.hoje; render(); };
+  $("#selTipo").onchange = e => { ST.tipo=e.target.value; render(); };
+  $("#selTransp").onchange = e => { ST.transp=e.target.value; render(); };
+  $("#selCheck").onchange = e => { ST.check=e.target.value; render(); };
+  $("#fPlaca").querySelectorAll("button").forEach(b=>b.onclick=()=>{ ST.fPlaca=b.dataset.f; syncUI(); renderPlacas(LAST); });
+  $("#qPlaca").oninput = e => { ST.qPlaca=e.target.value.trim(); renderPlacas(LAST); };
+  $("#btnLimpar").onclick = () => { padroes(); render(); };
+  $("#btnPrint").onclick = () => window.print();
+  $("#csvPlacas").onclick = () => {
+    const txt = "\uFEFF" + CSV_PLACAS.map(r=>r.map(v=>{ v=String(v??""); return /[;"\n]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v; }).join(";")).join("\n");
+    const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([txt],{type:"text/csv;charset=utf-8"})); a.download = `placas_aderencia_${LAST.P.lbl.replace(/[^\w-]+/g,"_")}.csv`; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),2000); };
+  $("#fileLocal").onchange = async e => { const f = e.target.files[0]; e.target.value=""; if (!f) return;
+    try{ overlay("Lendo "+esc(f.name)+"…"); const p = parseProntuario(await f.arrayBuffer()); prepare(p, HIST); buildFiltros(); render(); overlay(null);
+      $("#meta").insertAdjacentHTML("beforeend", `<br><span class="badge warn">pré-visualização local: ${esc(f.name)} (não publicado)</span>`); }
+    catch(err){ overlay(esc(err.message||err)+`<br><br><button class="btn" onclick="overlay(null)">Fechar</button>`, true); } };
+}
+
+/* =================== render =================== */
+let LAST = null;
+function render(){
+  syncUI();
+  const R = calcular(); LAST = R;
+  renderTopo(R); renderCharts(R); renderPlacas(R); renderCond(R); renderSituacao(R); renderAdmin();
+}
+
+/* =================== boot =================== */
+let HIST = null;
+function b64ToAb(b64){ const bin = atob(b64); const u = new Uint8Array(bin.length); for (let i=0;i<bin.length;i++) u[i]=bin.charCodeAt(i); return u.buffer; }
+async function boot(){
+  try{
+    await Promise.all([
+      loadScript(["https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js","https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"]),
+      loadScript(["https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js","https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"])
+    ]);
+    Chart.register(VLabels, Center);
+    Chart.defaults.font.family = FONT;
+    let ab, csvTxt = null;
+    if (window.__EMBED_PRONT){ ab = b64ToAb(window.__EMBED_PRONT); csvTxt = window.__EMBED_HIST || null; }
+    else {
+      const v = "?v=" + Date.now();
+      const [rp, rh] = await Promise.all([fetch(CFG.ARQ_PRONT+v, {cache:"no-store"}), fetch(CFG.ARQ_HIST+v, {cache:"no-store"}).catch(()=>null)]);
+      if (!rp.ok) throw new Error(`Não encontrei <b>${CFG.ARQ_PRONT}</b> no repositório (HTTP ${rp.status}).`);
+      ab = await rp.arrayBuffer();
+      if (rh && rh.ok) csvTxt = await rh.text();
+    }
+    HIST = csvTxt ? parseCSV(csvTxt) : null;
+    const p = parseProntuario(ab);
+    prepare(p, HIST);
+    buildFiltros(); bindUI(); render(); overlay(null);
+  }catch(err){
+    console.error(err);
+    overlay(`<b>Não foi possível carregar o painel.</b><br><br>${err.message||err}<br><br><span style="color:var(--muted)">Se estiver abrindo o arquivo direto do computador, use o botão abaixo para escolher o prontuário.</span><br><br><label class="btn" for="fileLocal">Escolher prontuário (.xlsx)</label>`, true);
+    try{ bindUI(); }catch(e){}
+  }
+}
+boot();
+</script>
+</body>
+</html>
