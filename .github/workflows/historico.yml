@@ -1,0 +1,29 @@
+name: Acumular histórico de inspeções
+
+# Roda sozinho toda vez que o prontuário é enviado para dados/
+on:
+  push:
+    paths:
+      - "dados/prontuario-equipamentos.xlsx"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  historico:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install openpyxl==3.1.5
+      - run: python scripts/atualizar_historico.py
+      - name: Salvar histórico
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add dados/historico_inspecoes.csv
+          git diff --cached --quiet || git commit -m "Histórico de inspeções atualizado (automático)"
+          git push
