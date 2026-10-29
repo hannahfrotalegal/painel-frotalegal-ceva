@@ -3,9 +3,12 @@
 Acumula as inspeções do prontuário (aba "Inspeções últimos 60 dias") em
 dados/historico_inspecoes.csv, para o painel enxergar além da janela de 60 dias.
 
-Regra de mesclagem (sem risco de duplicar):
-  histórico novo = linhas antigas com data ANTERIOR à 1ª data do arquivo novo
-                   + todas as linhas do arquivo novo.
+Regras:
+  - O dia da extração (data de geração do prontuário) NÃO entra: só até ontem,
+    para não guardar um dia incompleto.
+  - Mesclagem (sem risco de duplicar):
+    histórico novo = linhas antigas com data ANTERIOR à 1ª data do arquivo novo
+                     + linhas do arquivo novo (até o dia anterior à extração).
 
 Uso:  python scripts/atualizar_historico.py [xlsx] [csv]
 Padrão: dados/prontuario-equipamentos.xlsx  dados/historico_inspecoes.csv
@@ -45,8 +48,20 @@ def para_data(v):
     return None
 
 
+def data_geracao(wb):
+    """Data de geração (célula ao lado de 'Geração:' na 1ª aba)."""
+    for nome in wb.sheetnames:
+        if nome.startswith("Prontu"):
+            r = next(wb[nome].iter_rows(max_row=1, values_only=True), ())
+            for i, c in enumerate(r):
+                if c and "gera" in str(c).lower() and i + 1 < len(r):
+                    return para_data(r[i + 1])
+    return None
+
+
 def ler_prontuario(caminho):
     wb = openpyxl.load_workbook(caminho, read_only=True, data_only=True)
+    ger = data_geracao(wb)
     if ABA not in wb.sheetnames:
         raise SystemExit(f"Aba '{ABA}' não encontrada em {caminho}")
     linhas = list(wb[ABA].iter_rows(values_only=True))
@@ -60,13 +75,15 @@ def ler_prontuario(caminho):
         if not r or not r[idx["Identificador"]]:
             continue
         d = para_data(r[idx["Date de Execução"]])
-        if not d:
+        if not d or (ger and d >= ger):   # dia da extração fica de fora
             continue
         reg = {"data": d}
         for nome, campo in ORIGEM.items():
             v = r[idx[nome]] if nome in idx else ""
             reg[campo] = "" if v is None else str(v).strip()
         out.append(reg)
+    if ger:
+        print(f"Extração de {ger}: inspeções consideradas até o dia anterior.")
     return out
 
 
