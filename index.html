@@ -46,6 +46,22 @@ select:focus,input:focus,button:focus-visible{outline:2px solid var(--navy-2);ou
 .chip small{font-weight:500;opacity:.8}
 .btn{border:1px solid var(--line);background:var(--surface);color:var(--ink-2);border-radius:8px;padding:6px 12px;font:inherit;font-weight:600;cursor:pointer;min-height:34px}
 .btn:hover{border-color:var(--navy-2);color:var(--navy-2)}
+.btn.primary{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn.primary:hover{background:var(--navy-2);color:#fff}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+dialog.dlg{border:0;border-radius:14px;padding:0;max-width:560px;width:calc(100% - 32px);box-shadow:0 20px 60px rgba(16,24,40,.25);color:var(--ink)}
+dialog.dlg::backdrop{background:rgba(11,31,75,.35)}
+.dlg form{padding:20px 22px}
+.dlg h3{margin:0 0 4px;font-size:18px}
+.dlg .hint{color:var(--muted);font-size:12.5px;margin:0 0 14px}
+.dlg .row{margin:12px 0}
+.dlg label.f{display:block;font-size:12px;font-weight:600;color:var(--ink-2);margin-bottom:4px}
+.dlg input[type=password],.dlg input[type=text]{width:100%;font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px}
+.dlg .chk{display:flex;gap:6px;align-items:center;font-size:12.5px;color:var(--ink-2);margin-top:6px}
+.dlg .acts{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+.upinfo{background:#f7f8fb;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;line-height:1.6}
+.msg{margin-top:10px;padding:9px 12px;border-radius:9px;font-size:13px}
+.msg.ok{background:var(--green-soft);color:#11633a}.msg.err{background:var(--red-soft);color:#9b0010}.msg.warn{background:var(--amber-soft);color:#8a5a00}.msg.info{background:var(--navy-soft);color:var(--navy-2)}
 .btn.link{border:0;background:none;padding:4px 6px;min-height:0;text-decoration:underline}
 .fspacer{flex:1}
 /* ---------- período ---------- */
@@ -192,7 +208,7 @@ footer .foot-line{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin
     <div class="fspacer"></div>
     <div class="fgroup noprint">
       <label>&nbsp;</label>
-      <div style="display:flex;gap:6px"><button class="btn" id="btnLimpar" title="Voltar aos filtros padrão">Limpar</button><button class="btn" id="btnPrint" title="Imprimir ou salvar em PDF">Imprimir / PDF</button></div>
+      <div style="display:flex;gap:6px"><button class="btn primary" id="btnUp" title="Enviar um prontuário novo">⬆ Atualizar dados</button><button class="btn" id="btnLimpar" title="Voltar aos filtros padrão">Limpar</button><button class="btn" id="btnPrint" title="Imprimir ou salvar em PDF">Imprimir / PDF</button></div>
     </div>
   </div>
 </nav>
@@ -289,7 +305,8 @@ footer .foot-line{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin
       <li><b>Checklists considerados:</b> <span id="lstCheck"></span>. A inspeção de fumaça escura não entra.</li>
       <li><b>Veículo aderente:</b> fez ao menos 1 checklist no período. <b>Conformidade da frota</b> = aderentes ÷ total de veículos da base. Não representa aprovação das condições do veículo.</li>
       <li><b>Semanas</b> de segunda a domingo (padrão ISO, W1 = semana com a 1ª quinta-feira do ano). A semana em andamento aparece como parcial.</li>
-      <li><b>Histórico:</b> o prontuário traz os últimos 60 dias; semanas mais antigas vêm do histórico acumulado a cada atualização.</li>
+      <li><b>Corte:</b> o dia em que o prontuário foi extraído não entra (dados só até o dia anterior), para não contar um dia incompleto.</li>
+      <li><b>Histórico:</b> o prontuário traz os últimos 60 dias; semanas mais antigas vêm do histórico acumulado a cada atualização. Inspeções repetidas entre arquivos não duplicam: a partir da 1ª data do arquivo novo, vale só o arquivo novo.</li>
     </ul>
     <div id="adminBox"></div>
   </div>
@@ -301,6 +318,22 @@ footer .foot-line{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin
   </div>
 </footer>
 
+<dialog class="dlg" id="dlgUp">
+  <form method="dialog" onsubmit="return false">
+    <h3>Atualizar dados do painel</h3>
+    <p class="hint">Escolha o <b>prontuário de equipamentos</b> exportado do Frota Legal (ambiente CEVA, situação Ativo). O nome do arquivo não importa.</p>
+    <div class="row"><label class="btn" for="upFile">Escolher arquivo (.xlsx)</label> <span id="upNome" style="color:var(--muted);font-size:12.5px"></span><input type="file" id="upFile" accept=".xlsx" class="hidden"></div>
+    <div id="upInfo"></div>
+    <div class="row hidden" id="upSenhaBox">
+      <label class="f" for="upSenha">Senha de atualização</label>
+      <input type="password" id="upSenha" autocomplete="current-password">
+      <label class="chk"><input type="checkbox" id="upLembrar"> lembrar a senha neste navegador</label>
+    </div>
+    <div id="upMsg"></div>
+    <div class="acts"><button type="button" class="btn" id="upFechar">Fechar</button><button type="button" class="btn primary" id="upEnviar" disabled>Enviar para o painel</button></div>
+  </form>
+</dialog>
+
 <script>
 /* =================== CONFIGURAÇÃO =================== */
 const CFG = {
@@ -311,6 +344,9 @@ const CFG = {
   FAIXA_AMARELA: 0.50,    // >= 50% -> amarelo; abaixo -> vermelho
   DIAS_ALERTA: 30,        // "sem inspeção há mais de N dias"
   DATA_INICIO: "2026-05-01", // inspeções antes desta data são ignoradas (abril/26 incompleto)
+  AMBIENTE: "CEVA",          // o upload só aceita prontuário deste ambiente do Frota Legal
+  GH_OWNER: "hannahfrotalegal", GH_REPO: "painel-frotalegal-ceva",   // repositório (detectado sozinho no github.io)
+  ARQ_UPCFG: "config/upload.json",
   SEMANAS_HIST: 12,
   MESES_HIST: 12
 };
@@ -388,6 +424,8 @@ function parseProntuario(ab){
     const rP = XLSX.utils.sheet_to_json(wb.Sheets[shP], {header:1, raw:true, defval:null});
     const g0 = rP[0] || [];
     const gi = g0.findIndex(c => /gera/i.test(String(c||"")));
+    const ai = g0.findIndex(c => /ambiente/i.test(String(c||""))), ui = g0.findIndex(c => /usu.rio/i.test(String(c||"")));
+    var ambiente = ai>=0 ? String(g0[ai+1]||"").trim() : "", usuario = ui>=0 ? String(g0[ui+1]||"").trim() : "";
     if (gi >= 0 && typeof g0[gi+1] === "number"){ const n=g0[gi+1]; const mins=Math.round((n-Math.floor(n))*1440); geracao = {d:serialToIso(n), h:String(Math.floor(mins/60)).padStart(2,"0")+":"+String(mins%60).padStart(2,"0")}; }
     const g = rP.findIndex(r => r && r.includes("Identificador"));
     if (g >= 0){
@@ -408,7 +446,7 @@ function parseProntuario(ab){
       }
     }
   }
-  return {insp, pront, geracao};
+  return {insp, pront, geracao, ambiente: typeof ambiente!=="undefined"?ambiente:"", usuario: typeof usuario!=="undefined"?usuario:""};
 }
 function rec(d, placa, ck, resp, perfil, transp){
   const r = String(resp||"").replace(/[\s\u00a0]+/g," ").trim().toUpperCase();
@@ -433,13 +471,15 @@ const CH = {};
 function prepare(p, hist){
   const ini0 = CFG.DATA_INICIO || "0000";
   const corteIni = [].concat(p.insp, hist||[]).some(r => r.d < ini0);   // havia dados antes do início -> cobertura começa no início
-  let insp = p.insp.filter(r => r.d >= ini0);
-  if (hist) hist = hist.filter(r => r.d >= ini0);
+  const fim0 = p.geracao ? p.geracao.d : "9999";   // o dia da extração não entra (só até ontem)
+  let insp = p.insp.filter(r => r.d >= ini0 && r.d < fim0);
+  if (hist) hist = hist.filter(r => r.d >= ini0 && r.d < fim0);
   if (hist && hist.length && insp.length){
     const corte = insp.reduce((m,r)=>r.d<m?r.d:m, insp[0].d);
     insp = hist.filter(r => r.d < corte).concat(insp);
   } else if (hist && hist.length) insp = hist;
-  const hoje = p.geracao ? p.geracao.d : insp.reduce((m,r)=>r.d>m?r.d:m, "0000");
+  const hoje = p.geracao ? addDays(p.geracao.d, -1) : insp.reduce((m,r)=>r.d>m?r.d:m, "0000");   // último dia com dados completos
+  const ref = p.geracao ? p.geracao.d : hoje;
   let minD = insp.length ? insp.reduce((m,r)=>r.d<m?r.d:m, insp[0].d) : hoje;
   if (corteIni) minD = ini0;
   const semanas = []; for (let m=monday(minD); m<=hoje; m=addDays(m,7)){ const k=wkKey(m); semanas.push({key:k, lbl:"W"+isoWeek(m).w, ini:m, fim:addDays(m,6), parcial: m<minD || addDays(m,6)>hoje}); }
@@ -451,7 +491,7 @@ function prepare(p, hist){
   /* última inspeção considerando também a base de 60 dias / histórico */
   const ultInsp = new Map();
   insp.forEach(r => { if (CFG.CHECKLISTS.includes(r.ck) && (!ultInsp.has(r.placa) || r.d > ultInsp.get(r.placa))) ultInsp.set(r.placa, r.d); });
-  placas.forEach(x => { const a=x.ultPront, b=ultInsp.get(x.p)||null; x.ult = (a&&b) ? (a>b?a:b) : (a||b); x.dias = x.ult ? diffDays(x.ult, hoje) : null; });
+  placas.forEach(x => { const a=x.ultPront, b=ultInsp.get(x.p)||null; x.ult = (a&&b) ? (a>b?a:b) : (a||b); x.dias = x.ult ? diffDays(x.ult, ref) : null; });
   DATA = {insp, pront:p.pront, geracao:p.geracao, hoje, minD, semanas, meses, placas};
 }
 
@@ -757,7 +797,7 @@ function buildFiltros(){
     b.onclick = () => { const k = b.dataset.k; if (ST.semanas.has(k)) { if (ST.semanas.size>1) ST.semanas.delete(k); } else ST.semanas.add(k); render(); };
     b.ondblclick = () => { ST.semanas = new Set([b.dataset.k]); render(); };
   });
-  const comp = S.filter(s=>s.fim < DATA.hoje);
+  const comp = S.filter(s=>s.fim <= DATA.hoje);
   $("#chipsSemana").insertAdjacentHTML("beforeend", `<button class="btn link" id="qUlt">última</button><button class="btn link" id="q4">últimas 4</button>${ocultas?`<button class="btn link" id="qTodas">+ ${ocultas} anteriores</button>`:""}`);
   if (ocultas) $("#qTodas").onclick = () => { const on = $("#chipsSemana .chip.old.hidden"); $("#chipsSemana").querySelectorAll(".chip.old").forEach(c=>c.classList.toggle("hidden", !on)); $("#qTodas").textContent = on ? "ocultar anteriores" : `+ ${ocultas} anteriores`; };
   $("#qUlt").onclick = () => { ST.semanas = new Set(comp.slice(-1).map(s=>s.key)); render(); };
@@ -772,7 +812,7 @@ function buildFiltros(){
   padroes();
 }
 function padroes(){
-  const S = DATA.semanas; const comp = S.filter(s=>s.fim < DATA.hoje);   // semanas completas
+  const S = DATA.semanas; const comp = S.filter(s=>s.fim <= DATA.hoje);   // semanas completas
   const ult = comp.length ? comp[comp.length-1] : S[S.length-1];
   ST.modo="semana"; ST.semanas = new Set(ult?[ult.key]:[]);
   const mesUlt = ult ? ult.fim.slice(0,7) : DATA.hoje.slice(0,7); ST.mes = DATA.meses.some(m=>m.key===mesUlt) ? mesUlt : DATA.meses[DATA.meses.length-1].key;
@@ -808,6 +848,126 @@ function bindUI(){
     catch(err){ overlay(esc(err.message||err)+`<br><br><button class="btn" onclick="overlay(null)">Fechar</button>`, true); } };
 }
 
+
+/* =================== ENVIO PELO SITE (GitHub API) ===================
+   A chave (token do GitHub, só deste repositório, permissão Contents) fica
+   CRIPTOGRAFADA em config/upload.json com a senha da equipe. Sem a senha,
+   o arquivo não serve para nada. Configuração: abrir o site com ?admin=1. */
+const GH = (() => { const m = location.hostname.match(/^([^.]+)\.github\.io$/i); const seg = location.pathname.split("/").filter(Boolean)[0];
+  return (m && seg && !/\.html?$/i.test(seg)) ? {owner:m[1], repo:seg} : {owner:CFG.GH_OWNER, repo:CFG.GH_REPO}; })();
+const te = new TextEncoder(), td = new TextDecoder();
+const b64e = u8 => { let s=""; for (let i=0;i<u8.length;i+=0x8000) s += String.fromCharCode.apply(null, u8.subarray(i,i+0x8000)); return btoa(s); };
+const b64d = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+async function derivaChave(senha, salt, iter){ const base = await crypto.subtle.importKey("raw", te.encode(senha), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey({name:"PBKDF2", salt, iterations:iter, hash:"SHA-256"}, base, {name:"AES-GCM", length:256}, false, ["encrypt","decrypt"]); }
+async function cifrar(token, senha){ const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12)), iter = 310000;
+  const k = await derivaChave(senha, salt, iter); const ct = new Uint8Array(await crypto.subtle.encrypt({name:"AES-GCM", iv}, k, te.encode(token)));
+  return {v:1, iter, salt:b64e(salt), iv:b64e(iv), ct:b64e(ct), criado:new Date().toISOString().slice(0,10)}; }
+async function decifrar(c, senha){ const k = await derivaChave(senha, b64d(c.salt), c.iter);
+  return td.decode(await crypto.subtle.decrypt({name:"AES-GCM", iv:b64d(c.iv)}, k, b64d(c.ct))); }
+async function gh(path, token, opts){
+  return fetch("https://api.github.com"+path, Object.assign({}, opts||{}, {headers:{"Authorization":"Bearer "+token, "Accept":"application/vnd.github+json", "X-GitHub-Api-Version":"2022-11-28"}}));
+}
+async function ghPut(caminho, b64, msg, token){
+  const r = await gh(`/repos/${GH.owner}/${GH.repo}`, token);
+  if (r.status===401 || r.status===403) throw new Error("CHAVE");
+  if (!r.ok) throw new Error(`Não consegui acessar o repositório ${GH.owner}/${GH.repo} (HTTP ${r.status}).`);
+  const branch = (await r.json()).default_branch || "main";
+  const url = `/repos/${GH.owner}/${GH.repo}/contents/${caminho}`;
+  let sha = null; const g = await gh(url+"?ref="+encodeURIComponent(branch), token);
+  if (g.ok) sha = (await g.json()).sha; else if (g.status!==404) throw new Error(`Erro ao ler ${caminho} (HTTP ${g.status}).`);
+  const body = {message:msg, content:b64, branch}; if (sha) body.sha = sha;
+  const p = await gh(url, token, {method:"PUT", body:JSON.stringify(body)});
+  if (p.status===401 || p.status===403) throw new Error("CHAVE");
+  if (!p.ok){ let d=""; try{ d=(await p.json()).message||""; }catch(e){} throw new Error(`Falha ao enviar (HTTP ${p.status}). ${esc(d)}`); }
+}
+let UPCFG = null, UP = null;
+async function carregaUpCfg(){ try{ const r = await fetch(CFG.ARQ_UPCFG+"?v="+Date.now(), {cache:"no-store"}); UPCFG = r.ok ? await r.json() : null; }catch(e){ UPCFG = null; } }
+const lsGet = k => { try{ return localStorage.getItem(k)||""; }catch(e){ return ""; } };
+const lsSet = (k,v) => { try{ v ? localStorage.setItem(k,v) : localStorage.removeItem(k); }catch(e){} };
+const upMsg = (tipo, html) => { $("#upMsg").innerHTML = html ? `<div class="msg ${tipo}">${html}</div>` : ""; };
+function abrirUpload(){
+  UP = null; $("#upNome").textContent = ""; $("#upInfo").innerHTML = ""; $("#upSenhaBox").classList.add("hidden"); $("#upEnviar").disabled = true;
+  upMsg(UPCFG ? "" : "warn", UPCFG ? "" : "O envio pelo site ainda não foi configurado. A administradora precisa abrir o painel com <b>?admin=1</b> e salvar a chave de envio.");
+  $("#dlgUp").showModal();
+}
+async function escolherArquivo(f){
+  UP = null; $("#upEnviar").disabled = true; $("#upSenhaBox").classList.add("hidden"); $("#upInfo").innerHTML = ""; upMsg("info", "Conferindo o arquivo…");
+  $("#upNome").textContent = f.name;
+  try{
+    const ab = await f.arrayBuffer(); const p = parseProntuario(ab);
+    if (CFG.AMBIENTE && p.ambiente && !norm(p.ambiente).includes(norm(CFG.AMBIENTE))) throw new Error(`Este prontuário é do ambiente <b>${esc(p.ambiente)}</b>. O painel só aceita o ambiente <b>${esc(CFG.AMBIENTE)}</b>.`);
+    if (!p.geracao) throw new Error("Não encontrei a data de geração no arquivo. Exporte de novo o Prontuário de Equipamentos pelo Frota Legal.");
+    const nova = p.geracao.d+" "+p.geracao.h, atual = DATA && DATA.geracao ? DATA.geracao.d+" "+DATA.geracao.h : "";
+    if (atual && nova < atual) throw new Error(`Este arquivo foi gerado em <b>${fdma(p.geracao.d)} ${p.geracao.h}</b>, antes do que já está publicado (${fdma(DATA.geracao.d)} ${DATA.geracao.h}). Envie sempre o prontuário mais recente.`);
+    if (atual && nova === atual) throw new Error("Este é o mesmo prontuário que já está publicado.");
+    const val = p.insp.filter(r => BASE_SET.has(r.placa) && CFG.CHECKLISTS.includes(r.ck) && r.d < p.geracao.d);
+    const ds = val.map(r=>r.d).sort();
+    $("#upInfo").innerHTML = `<div class="upinfo">✅ Prontuário do ambiente <b>${esc(p.ambiente||"?")}</b>, gerado em <b>${fdma(p.geracao.d)} ${p.geracao.h}</b>${p.usuario?` por ${esc(titleCase(p.usuario))}`:""}.<br>
+      ${fmtN(val.length)} checklists válidos nas placas da base${ds.length?`, de ${fdma(ds[0])} a <b>${fdma(ds[ds.length-1])}</b>`:""}.<br>
+      <span style="color:var(--muted)">O dia ${fdma(p.geracao.d)} (dia da extração) não entra.</span></div>`;
+    UP = {ab, p, nome:f.name}; upMsg("", "");
+    if (UPCFG){ $("#upSenhaBox").classList.remove("hidden"); const sv = lsGet("ceva_up_senha"); $("#upSenha").value = sv; $("#upLembrar").checked = !!sv; $("#upEnviar").disabled = false; setTimeout(()=>$("#upSenha").focus(), 50); }
+    else upMsg("warn", "Arquivo válido, mas o envio pelo site ainda não foi configurado (?admin=1). Você pode só visualizar: feche esta janela e use “Carregar arquivo local” no rodapé.");
+  }catch(err){ upMsg("err", err.message||String(err)); }
+}
+async function enviarArquivo(){
+  if (!UP || !UPCFG) return; const senha = $("#upSenha").value;
+  if (!senha){ upMsg("warn", "Digite a senha de atualização."); return; }
+  $("#upEnviar").disabled = true; upMsg("info", "Enviando… não feche esta janela.");
+  let token;
+  try{ token = await decifrar(UPCFG, senha); }catch(e){ upMsg("err", "Senha incorreta."); $("#upEnviar").disabled = false; return; }
+  try{
+    const g = UP.p.geracao;
+    await ghPut(CFG.ARQ_PRONT, b64e(new Uint8Array(UP.ab)), `Atualiza prontuário — extração ${fdma(g.d)} ${g.h} (enviado pelo painel)`, token);
+    lsSet("ceva_up_senha", $("#upLembrar").checked ? senha : "");
+    prepare(UP.p, HIST); buildFiltros(); render();
+    upMsg("ok", `<b>Enviado!</b> Você já está vendo os dados novos. Para as outras pessoas, o site atualiza em 1 a 2 minutos (Ctrl+F5 se precisar). O histórico é atualizado sozinho em seguida.`);
+    UP = null; $("#upSenhaBox").classList.add("hidden");
+  }catch(err){
+    const m = String(err.message||err);
+    upMsg("err", m==="CHAVE" ? "A chave de envio expirou ou foi revogada. Peça para a administradora gerar uma nova e salvar em <b>?admin=1</b>." : m);
+    $("#upEnviar").disabled = false;
+  }
+}
+function bindUpload(){
+  $("#btnUp").onclick = abrirUpload;
+  $("#upFechar").onclick = () => $("#dlgUp").close();
+  $("#upFile").onchange = e => { const f = e.target.files[0]; e.target.value = ""; if (f) escolherArquivo(f); };
+  $("#upEnviar").onclick = enviarArquivo;
+  $("#upSenha").onkeydown = e => { if (e.key==="Enter"){ e.preventDefault(); enviarArquivo(); } };
+}
+/* --- configuração da chave (só com ?admin=1) --- */
+function renderConfigEnvio(){
+  if (!/[?&]admin=1/.test(location.search)) return;
+  const box = document.createElement("div"); box.className = "card admin"; box.style.marginTop = "14px";
+  box.innerHTML = `<b>Configurar envio pelo site</b> <span style="color:var(--muted)">— ${UPCFG?`configurado em ${esc(UPCFG.criado||"?")}`:"ainda não configurado"} · repositório ${esc(GH.owner)}/${esc(GH.repo)}</span>
+    <p style="margin:6px 0 10px;color:var(--ink-2)">Cole um token do GitHub (fine-grained, só este repositório, permissão <b>Contents: Read and write</b>) e defina a senha que a equipe vai usar. O token é salvo criptografado com a senha.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px">
+      <div><label class="f" style="font-size:12px;font-weight:600">Token do GitHub</label><input type="password" id="cfgTok" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px" autocomplete="off"></div>
+      <div><label class="f" style="font-size:12px;font-weight:600">Senha da equipe (mín. 10 caracteres)</label><input type="password" id="cfgS1" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px" autocomplete="new-password"></div>
+      <div><label class="f" style="font-size:12px;font-weight:600">Repita a senha</label><input type="password" id="cfgS2" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px" autocomplete="new-password"></div>
+    </div>
+    <div style="margin-top:10px"><button class="btn primary" id="cfgSalvar">Salvar configuração</button></div><div id="cfgMsg"></div>`;
+  $("footer .card").appendChild(box);
+  $("#cfgSalvar").onclick = async () => {
+    const tok = $("#cfgTok").value.trim(), s1 = $("#cfgS1").value, s2 = $("#cfgS2").value, out = t => $("#cfgMsg").innerHTML = t;
+    if (!tok) return out(`<div class="msg warn">Cole o token.</div>`);
+    if (s1.length < 10) return out(`<div class="msg warn">Use uma senha com pelo menos 10 caracteres.</div>`);
+    if (s1 !== s2) return out(`<div class="msg warn">As senhas não conferem.</div>`);
+    out(`<div class="msg info">Testando o token…</div>`);
+    try{
+      const r = await gh(`/repos/${GH.owner}/${GH.repo}`, tok);
+      if (!r.ok) throw new Error(`O token não acessa ${GH.owner}/${GH.repo} (HTTP ${r.status}). Confira se o repositório foi selecionado ao criar o token.`);
+      const j = await r.json(); if (j.permissions && !j.permissions.push) throw new Error("O token não tem permissão de escrita (Contents: Read and write).");
+      const cfg = await cifrar(tok, s1);
+      await ghPut(CFG.ARQ_UPCFG, b64e(te.encode(JSON.stringify(cfg, null, 1))), "Configura envio de dados pelo painel", tok);
+      UPCFG = cfg; $("#cfgTok").value = $("#cfgS1").value = $("#cfgS2").value = "";
+      out(`<div class="msg ok"><b>Pronto!</b> O botão “Atualizar dados” já funciona com essa senha. Passe a senha para a equipe (e para o cliente, se quiser).</div>`);
+    }catch(e){ out(`<div class="msg err">${e.message==="CHAVE" ? "Token sem permissão de escrita neste repositório." : (e.message||e)}</div>`); }
+  };
+}
+
 /* =================== render =================== */
 let LAST = null;
 function render(){
@@ -839,11 +999,12 @@ async function boot(){
     HIST = csvTxt ? parseCSV(csvTxt) : null;
     const p = parseProntuario(ab);
     prepare(p, HIST);
-    buildFiltros(); bindUI(); render(); overlay(null);
+    buildFiltros(); bindUI(); bindUpload(); render(); overlay(null);
+    await carregaUpCfg(); renderConfigEnvio();
   }catch(err){
     console.error(err);
     overlay(`<b>Não foi possível carregar o painel.</b><br><br>${err.message||err}<br><br><span style="color:var(--muted)">Se estiver abrindo o arquivo direto do computador, use o botão abaixo para escolher o prontuário.</span><br><br><label class="btn" for="fileLocal">Escolher prontuário (.xlsx)</label>`, true);
-    try{ bindUI(); }catch(e){}
+    try{ bindUI(); bindUpload(); }catch(e){}
   }
 }
 boot();
