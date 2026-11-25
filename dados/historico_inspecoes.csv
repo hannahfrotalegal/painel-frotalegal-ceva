@@ -1,4 +1,27 @@
 ﻿data,identificador,marca_modelo,transportador,tipo_inspecao,checklist,responsavel,perfil,unidade
+2026-11-24,TKV0J18,VW / 20.480 CTM 4X2,1. CEVA Logistics,Inspeção Condutor,Inspeção Condutor,GUILHERME RODRIGUES DA SILVA,Colaborador CEVA,CEVA Logistics;GM OUTBOUND GTAC
+2026-11-24,TKR4I81,VW / 20.480 CTM 4X2,1. CEVA Logistics,Inspeção Condutor,Inspeção Condutor,Fabio Elias da Costa,Colaborador CEVA,GM INBOUND GTAC;CEVA Logistics
+2026-11-24,TKE7G73,VW / 20.480 CTM 4X2,1. CEVA Logistics,Inspeção Condutor,Inspeção Condutor,LUIZ AMERICO DONISETE,Colaborador CEVA,CEVA Logistics
+2026-11-24,GGR1829,FOTON / AUMARK 10-16,1. CEVA Logistics,Inspeção Condutor,Inspeção Condutor,BRUNO SANTANA DE CARVALHO,Colaborador CEVA,CEVA Logistics
+2026-11-23,TKV6A79,IVECO / S-WAY 540-6X4,1. CEVA Logistics,Inspeção Condutor,Inspeção Condutor,Paulo Cesar Mulbaier,Condutores Inspeções,CEVA Logistics
+2026-11-23,TKV3J34,IVECO / S-WAY 540-6X4,1. CEVA Logistics,Inspeção Condutor,Inspeção Condutor,RENATO TOCI AYROSA,Colaborador CEVA,CEVA Logistics
+2026-11-23,TKV0J18,VW / 20.480 CTM 4X2,1. CEVA Logistics,Inspeção Condutor,Inspeção Condutor,GUILHERME RODRIGUES DA SILVA,Colaborador CEVA,CEVA Logistics;GM OUTBOUND GTAC
+2026-11-23,TKE7G73,VW / 20.480 CTM 4X2,1. CEVA Logistics,Inspeção Condutor,Inspeção Condutor,BRUNO SANTANA DE CARVALHO,Colaborador CEVA,CEVA Logistics
+2026-11-23,LTV6154,IVECO / STRALIS 490S40T,1. CEVA Logistics,Inspeção Condutor,Inspeção Condutor,LUIZ AMERICO DONISETE,Colaborador CEVA,CEVA Logistics
+2026-11-20,TTG1F61,VW / 20.480 CTM 4X2,1. CEVA Logistics,Inspeção Condutor,Inspeção Condutor,LUIZ AMERICO DONISETE,Colaborador CEVA,XD BETIM
+2026-11-19,TKV0J18,VW / 20.480 CTM 4X2,1. CEVA Logistics,Inspeção Condutor,Inspeção Condutor,GUILHERME RODRIGUES DA SILVA,Colaborador CEVA,CEVA Logistics;GM OUTBOUND GTAC
+2026-11-19,TKR4I81,VW / 20.480 CTM 4X2,1. CEVA Logistics,Inspeção Fumaça Escura (Somente autorizados),Inspeção Fumaça Escura (Somente autorizados),Julio,Administrador,GM INBOUND GTAC;CEVA Logistics
+2026-11-19,TKE7G73,VW / 20.480 CTM 4X2,1. CEVA Logistics,Inspeção Fumaça Escura (Somente autorizados),Inspeção Fumaça Escura (Somente autorizados),Julio,Administrador,CEVA Logistics
+2026-11-19,TKE7G73,VW / 20.480 CTM 4X2,1. CEVA Logistics,Inspeção Condutor,Inspeção Condutor,BRUNO SANTANA DE CARVALHO,Colaborador CEVA,CEVA Logistics
+2026-11-19,LTV6B56,0 / 0,1. CEVA Logistics,Inspeção Fumaça Escura (Somente autorizados),Inspeção Fumaça Escura (Somente autorizados),Julio,Administrador,CEVA Logistics
+2026-11-19,LTV6B56,0 / 0,1. CEVA Logistics,Inspeção Fumaça Escura (Somente autorizados),Inspeção Fumaça Escura (Somente autorizados),Julio,Administrador,CEVA Logistics
+2026-11-19,GGR1829,FOTON / AUMARK 10-16,1. CEVA Logistics,Inspeção Fumaça Escura (Somente autorizados),Inspeção Fumaça Escura (Somente autorizados),Julio,Administrador,CEVA Logistics
+2026-11-18,TKX9A78,vw / 20.480 CTM 4X2,1. CEVA Logistics,Inspeção Condutor,Inspeção Condutor,RENATO TOCI AYROSA,Colaborador CEVA,CEVA Logistics
+2026-11-18,TKX9A78,vw / 20.480 CTM 4X2,1. CEVA Logistics,Inspeção Condutor,Inspeção Condutor,RENATO TOCI AYROSA,Colaborador CEVA,CEVA Logistics
+2026-11-18,TKV6A79,IVECO / S-WAY 540-6X4,1. CEVA Logistics,Inspeção Condutor,Inspeção Condutor,Paulo Cesar Mulbaier,Condutores Inspeções,CEVA Logistics
+2026-11-18,TKV0J18,VW / 20.480 CTM 4X2,1. CEVA Logistics,Inspeção Condutor,Inspeção Condutor,GUILHERME RODRIGUES DA SILVA,Colaborador CEVA,CEVA Logistics;GM OUTBOUND GTAC
+2026-11-18,TKE7G73,VW / 20.480 CTM 4X2,1. CEVA Logistics,Inspeção Condutor,Inspeção Condutor,LUIZ AMERICO DONISETE,Colaborador CEVA,CEVA Logistics
+2026-11-18,GGR1829,FOTON / AUMARK 10-16,1. CEVA Logistics,Inspeção Condutor,Inspeção Condutor,BRUNO SANTANA DE CARVALHO,Colaborador CEVA,CEVA Logistics
 2026-11-17,TKX9A78,vw / 20.480 CTM 4X2,1. CEVA Logistics,Inspeção Condutor,Inspeção Condutor,GUILHERME RODRIGUES DA SILVA,Colaborador CEVA,CEVA Logistics
 2026-11-17,TKV6A79,IVECO / S-WAY 540-6X4,1. CEVA Logistics,Inspeção Condutor,Inspeção Condutor,Paulo Cesar Mulbaier,Condutores Inspeções,CEVA Logistics
 2026-11-17,TKV0J18,VW / 20.480 CTM 4X2,1. CEVA Logistics,Inspeção Condutor,Inspeção Condutor,LUIZ AMERICO DONISETE,Colaborador CEVA,CEVA Logistics;GM OUTBOUND GTAC
